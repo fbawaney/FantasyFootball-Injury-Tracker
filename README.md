@@ -1,43 +1,27 @@
+<<<<<<< HEAD
 # Fantasy Football Injury Tracker
 
 A comprehensive tool to monitor NFL player injuries for your Yahoo Fantasy Football league. Get real-time alerts when owned players or top free agents are injured.
 
 ## Features
 
-- **Yahoo Fantasy Integration**: Automatically tracks all players in your league (owned + top free agents)
-- **Multiple Data Sources**: Fetches injury data from Sleeper API (most comprehensive free source)
-- **Real-time Alerts**: Get notified immediately when:
   - A player gets newly injured
   - An injury status worsens (e.g., Questionable → Out)
-- **News Sentiment Analysis**:
   - Analyzes RSS news feeds from Yahoo Sports and Rotoworld
   - Color-coded severity indicators (🔴 Severe, 🟡 Moderate, ⚪ Neutral, 🟢 Positive)
   - Sentiment scoring from -1 (very negative) to +1 (very positive)
-- **NFL Depth Chart Integration**:
   - Identifies direct backup players for injured starters
   - Shows backup availability (owned vs. free agent)
   - **Warns if backup is also injured** to prevent bad pickups
-- **Smart Matching**: Automatically matches Yahoo players with injury data sources
-- **Multiple Notification Methods**:
   - Console alerts (default)
   - Desktop notifications (macOS, Linux, Windows)
   - Email alerts (coming soon)
-- **Continuous Monitoring**: Runs in background and checks for updates at configurable intervals
-- **Detailed Reports**: View comprehensive injury reports for your entire league with sentiment analysis
-- **Alert Window**: Only alerts on injuries first seen within 24 hours (configurable)
 
 ## Data Sources
 
 ### Primary: Sleeper API
-- **Free** and requires no authentication
-- Most comprehensive injury data
-- Includes: injury status, body part, notes, and start date
-- Updates frequently
 
 ### Future Enhancements
-- ESPN API (unofficial, may be added)
-- Twitter/X integration for beat reporter updates
-- Additional APIs as they become available
 
 ## Installation
 
@@ -54,12 +38,6 @@ pip install -r requirements.txt
 ```
 
 Required packages:
-- `yfpy` - Yahoo Fantasy Sports API wrapper
-- `requests` - HTTP requests
-- `python-dotenv` - Environment variable management
-- `schedule` - Task scheduling
-- `feedparser` - RSS feed parsing for news
-- `textblob` - Sentiment analysis
 
 ### 3. Set Up Yahoo API Credentials
 
@@ -392,3 +370,7 @@ For issues or questions:
 ---
 
 **Good luck with your fantasy season!** 🏈
+=======
+# FantasyFootball-Injury-Tracker
+A tracker for injured players owned by league mates in our Yahoo Fantasy Football league
+>>>>>>> 682033c0a6d331b972560d4041f3d910590760d4
