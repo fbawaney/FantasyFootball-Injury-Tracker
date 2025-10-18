@@ -2,6 +2,7 @@
 Injury Tracker Module
 Fetches injury data from multiple sources including Sleeper API and ESPN
 Includes depth chart integration to identify backup players
+Enhanced with ML predictions and injury risk scoring
 """
 import requests
 import json
@@ -10,17 +11,22 @@ from datetime import datetime
 import time
 import feedparser
 from textblob import TextBlob
+from injury_database import InjuryDatabase
+from ml_predictor import InjuryPredictor
+from risk_scorer import InjuryRiskScorer
+from news_analyzer import NewsAnalyzer
 
 
 class InjuryTracker:
-    """Tracks NFL player injuries from multiple sources"""
+    """Tracks NFL player injuries from multiple sources with ML predictions"""
 
-    def __init__(self, depth_chart_manager=None):
+    def __init__(self, depth_chart_manager=None, enable_ml: bool = True):
         """
         Initialize injury tracker with API endpoints
 
         Args:
             depth_chart_manager: Optional DepthChartManager instance for backup lookups
+            enable_ml: Enable ML predictions and risk scoring (default: True)
         """
         self.sleeper_players_url = "https://api.sleeper.app/v1/players/nfl"
         self.espn_injuries_base = "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl"
@@ -33,6 +39,24 @@ class InjuryTracker:
         self.cache_duration = 3600  # Cache for 1 hour
         self.depth_chart_manager = depth_chart_manager
         self.news_cache = {}  # Cache for RSS news by player name
+
+        # ML components
+        self.enable_ml = enable_ml
+        self.db = None
+        self.predictor = None
+        self.risk_scorer = None
+
+        if enable_ml:
+            try:
+                self.db = InjuryDatabase()
+                self.predictor = InjuryPredictor(self.db)
+                self.risk_scorer = InjuryRiskScorer(self.db)
+                self.news_analyzer = NewsAnalyzer()
+                print("ML predictions, risk scoring, and news analysis enabled")
+            except Exception as e:
+                print(f"Warning: Could not initialize ML components: {e}")
+                print("Running without ML predictions")
+                self.enable_ml = False
 
     def fetch_sleeper_players(self) -> Dict:
         """
@@ -412,6 +436,14 @@ class InjuryTracker:
         if self.depth_chart_manager:
             matched_players = self.enrich_with_backup_info(matched_players, yahoo_players)
 
+        # Add ML predictions and risk scoring if enabled
+        if self.enable_ml:
+            matched_players = self.enrich_with_ml_predictions(matched_players)
+
+        # Save injuries to database for historical tracking
+        if self.enable_ml and self.db:
+            self._save_injuries_to_database(matched_players)
+
         return matched_players
 
     def enrich_with_backup_info(self, injured_players: List[Dict],
@@ -554,6 +586,130 @@ class InjuryTracker:
 
         return new_injuries
 
+    def enrich_with_ml_predictions(self, injured_players: List[Dict]) -> List[Dict]:
+        """
+        Add ML predictions, news overrides, and risk scores to injury data
+
+        Args:
+            injured_players: List of injured players
+
+        Returns:
+            Injured players enriched with ML predictions, news analysis, and risk scores
+        """
+        print("Adding ML predictions, news analysis, and risk scores...")
+
+        for player in injured_players:
+            # Get base ML prediction
+            if self.predictor:
+                try:
+                    ml_prediction = self.predictor.predict_recovery_time(player)
+
+                    # Check if news provides a timeline override
+                    news_items = player.get('news', [])
+                    if news_items and self.news_analyzer:
+                        news_override = self.news_analyzer.analyze_news_for_timeline(news_items)
+
+                        if news_override.get('has_override'):
+                            # Store original ML prediction
+                            ml_prediction['ml_original'] = {
+                                'predicted_days': ml_prediction['predicted_days'],
+                                'weeks_out': ml_prediction['weeks_out'],
+                                'return_week': ml_prediction['return_week']
+                            }
+
+                            # Apply news override
+                            ml_prediction['overridden_by_news'] = True
+                            ml_prediction['override_type'] = news_override['override_type']
+                            ml_prediction['override_reason'] = news_override['reason']
+                            ml_prediction['override_severity'] = news_override['severity']
+                            ml_prediction['news_source'] = news_override.get('news_source', '')
+
+                            # Update prediction values with news timeline
+                            ml_prediction['predicted_days'] = news_override['predicted_days']
+                            ml_prediction['confidence_low'] = news_override['confidence_low']
+                            ml_prediction['confidence_high'] = news_override['confidence_high']
+                            ml_prediction['weeks_out'] = news_override['weeks_out']
+
+                            # Recalculate return week with overridden timeline
+                            import numpy as np
+                            from datetime import datetime, timedelta
+                            current_week = ml_prediction['current_week']
+                            weeks_to_add = int(np.ceil(news_override['predicted_days'] / 7.0))
+                            ml_prediction['return_week'] = current_week + weeks_to_add
+                            ml_prediction['weeks_out'] = weeks_to_add
+
+                            expected_return = datetime.now() + timedelta(days=news_override['predicted_days'])
+                            ml_prediction['expected_return_date'] = expected_return.strftime('%Y-%m-%d')
+                        else:
+                            ml_prediction['overridden_by_news'] = False
+
+                    player['ml_prediction'] = ml_prediction
+
+                    # Get historical comparisons
+                    similar = self.predictor.get_historical_comparison(player, limit=3)
+                    player['similar_injuries'] = similar
+                except Exception as e:
+                    print(f"Error predicting for {player['name']}: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    player['ml_prediction'] = None
+                    player['similar_injuries'] = []
+
+            # Get injury risk score
+            if self.risk_scorer:
+                try:
+                    risk = self.risk_scorer.calculate_risk_score(
+                        player['name'],
+                        player
+                    )
+                    player['risk_assessment'] = risk
+                except Exception as e:
+                    print(f"Error calculating risk for {player['name']}: {e}")
+                    player['risk_assessment'] = None
+
+        return injured_players
+
+    def _save_injuries_to_database(self, injured_players: List[Dict]):
+        """
+        Save current injuries to database for historical tracking
+
+        Args:
+            injured_players: List of injured players
+        """
+        if not self.db:
+            return
+
+        for player in injured_players:
+            try:
+                # Check if this is a new injury or status change
+                history = self.db.get_player_injury_history(player['name'])
+
+                # Find active injury (no end date)
+                active_injury = None
+                for inj in history:
+                    if not inj.get('injury_end_date'):
+                        active_injury = inj
+                        break
+
+                if active_injury:
+                    # Update existing injury if status changed
+                    if active_injury.get('injury_status') != player.get('injury_status'):
+                        self.db.update_injury_status(
+                            active_injury['id'],
+                            player.get('injury_status'),
+                            active_injury.get('injury_status')
+                        )
+                else:
+                    # Add new injury
+                    self.db.add_injury_record(player)
+
+                # Update player summary
+                self.db.update_player_summary(player['name'])
+
+            except Exception as e:
+                print(f"Error saving injury for {player['name']}: {e}")
+                continue
+
     def save_injury_news_to_markdown(self, injured_players: List[Dict],
                                      output_file: str = 'injury_news.md') -> None:
         """
@@ -633,9 +789,45 @@ class InjuryTracker:
                     name = player.get('name', 'Unknown')
                     news_items = player.get('news', [])
 
-                    if news_items:
+                    if news_items or player.get('ml_prediction') or player.get('risk_assessment'):
                         f.write(f"### {name} ({player.get('team', 'N/A')}) - {player.get('injury_status', 'Unknown')}\n\n")
                         f.write(f"**Owner**: {player.get('owned_by_manager', 'Free Agent')}\n\n")
+
+                        # Show ML prediction if available
+                        ml_pred = player.get('ml_prediction')
+                        if ml_pred and not ml_pred.get('error'):
+                            return_week = ml_pred.get('return_week', 'Unknown')
+                            weeks_out = ml_pred.get('weeks_out', 'Unknown')
+                            days = ml_pred.get('predicted_days', 'Unknown')
+
+                            # Check if prediction was overridden by news
+                            if ml_pred.get('overridden_by_news'):
+                                f.write(f"**🤖📰 NEWS-ADJUSTED PREDICTION**:\n")
+                                f.write(f"- Expected return: NFL Week {return_week} ({weeks_out} weeks from now, ~{days} days)\n")
+                                f.write(f"- Range: {ml_pred.get('confidence_low', 'N/A')}-{ml_pred.get('confidence_high', 'N/A')} days\n")
+                                f.write(f"- Return date: {ml_pred.get('expected_return_date', 'Unknown')}\n")
+                                f.write(f"- **Override reason**: {ml_pred.get('override_reason', 'News reports different timeline')}\n")
+
+                                # Show original ML prediction for comparison
+                                ml_orig = ml_pred.get('ml_original', {})
+                                if ml_orig:
+                                    f.write(f"- ML model (before news): NFL Week {ml_orig.get('return_week', '?')} ({ml_orig.get('predicted_days', '?')} days)\n")
+                                f.write("\n")
+                            else:
+                                f.write(f"**🤖 ML Prediction**:\n")
+                                f.write(f"- Expected return: NFL Week {return_week} ({weeks_out} weeks from now, ~{days} days)\n")
+                                f.write(f"- Range: {ml_pred.get('confidence_low', 'N/A')}-{ml_pred.get('confidence_high', 'N/A')} days\n")
+                                f.write(f"- Return date: {ml_pred.get('expected_return_date', 'Unknown')}\n\n")
+
+                        # Show risk assessment if available
+                        risk = player.get('risk_assessment')
+                        if risk:
+                            risk_color = self._get_risk_emoji(risk.get('risk_level', 'Low'))
+                            f.write(f"**⚠️ Injury Risk Assessment**: {risk_color} {risk.get('risk_level', 'Unknown')} (Score: {risk.get('risk_score', 0)}/100)\n")
+                            f.write(f"- {risk.get('message', 'No details')}\n")
+                            if risk.get('chronic_areas'):
+                                f.write(f"- Chronic issues: {', '.join(risk['chronic_areas'])}\n")
+                            f.write("\n")
 
                         # Show backup player info if available
                         backup = player.get('backup_player')
@@ -670,6 +862,26 @@ class InjuryTracker:
 
         except Exception as e:
             print(f"Error saving injury news to markdown: {e}")
+
+    def _get_risk_emoji(self, risk_level: str) -> str:
+        """Get emoji for risk level"""
+        emojis = {
+            'Critical': '🔴',
+            'High': '🟠',
+            'Moderate': '🟡',
+            'Low': '🟢',
+            'Minimal': '⚪'
+        }
+        return emojis.get(risk_level, '⚪')
+
+    def close(self):
+        """Close database connection"""
+        if self.db:
+            self.db.close()
+
+    def __del__(self):
+        """Cleanup on deletion"""
+        self.close()
 
 
 if __name__ == "__main__":

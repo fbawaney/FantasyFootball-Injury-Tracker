@@ -121,9 +121,9 @@ class InjuryMonitor:
             if self.use_depth_charts:
                 print(f"  ✓ Backup player info included")
 
-            # Step 4: Compare with previous data to find new/updated injuries
-            print("\nStep 4: Comparing with previous injury data...")
-            print(f"  Alert window: {self.alert_window_hours} hours")
+            # Step 4: Compare with previous data to find new/updated injuries FOR ALERTS
+            print("\nStep 4: Detecting new/worsened injuries for alerts...")
+            print(f"  Alert window: {self.alert_window_hours} hours (configurable)")
             new_injuries = self.injury_tracker.get_new_injuries(
                 current_injuries,
                 self.previous_injuries,
@@ -131,11 +131,11 @@ class InjuryMonitor:
             )
 
             if new_injuries:
-                print(f"  ⚠️  {len(new_injuries)} new or updated injuries detected!")
-                # Send alerts for new injuries
-                self.notifier.send_alert(new_injuries)
+                print(f"  ⚠️  {len(new_injuries)} new or updated injuries for alerts!")
+                # Send targeted alerts for new/worsened injuries
+                self.notifier.send_alert(new_injuries, alert_mode=True)
             else:
-                print("  ✓ No new injuries detected")
+                print("  ✓ No new injuries to alert on")
 
             # Step 5: Save current injuries for next check
             print("\nStep 5: Saving current injury data...")
@@ -149,10 +149,10 @@ class InjuryMonitor:
                 self.injury_tracker.save_injury_news_to_markdown(current_injuries)
                 print("  ✓ Injury news report saved to injury_news.md")
 
-            # Step 7: Display summary
+            # Step 7: Display comprehensive summary of ALL injuries with ML predictions
             if current_injuries:
-                print("\nStep 7: Generating summary report...")
-                summary = self.notifier.format_summary_report(current_injuries)
+                print("\nStep 7: Generating comprehensive injury report (ALL injuries)...")
+                summary = self.notifier.format_summary_report(current_injuries, show_all=True)
                 print(summary)
 
             print(f"\n{'='*80}")

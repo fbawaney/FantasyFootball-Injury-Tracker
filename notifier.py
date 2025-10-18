@@ -25,39 +25,49 @@ class Notifier:
         self.method = os.getenv('NOTIFICATION_METHOD', method)
         self.system = platform.system()
 
-    def send_alert(self, injuries: List[Dict]):
+    def send_alert(self, injuries: List[Dict], alert_mode: bool = True):
         """
         Send injury alerts using configured method
 
         Args:
             injuries: List of injury records to alert on
+            alert_mode: If True, show targeted alerts (new/worsened only)
+                       If False, show comprehensive report (all injuries)
         """
         if not injuries:
             return
 
         if self.method == 'console':
-            self._console_alert(injuries)
+            self._console_alert(injuries, alert_mode=alert_mode)
         elif self.method == 'desktop':
             self._desktop_alert(injuries)
         elif self.method == 'email':
             self._email_alert(injuries)
         else:
             print(f"Unknown notification method: {self.method}")
-            self._console_alert(injuries)
+            self._console_alert(injuries, alert_mode=alert_mode)
 
-    def _console_alert(self, injuries: List[Dict]):
+    def _console_alert(self, injuries: List[Dict], alert_mode: bool = True):
         """
         Display alerts in console
 
         Args:
             injuries: List of injury records
+            alert_mode: If True, show as alerts. If False, show as comprehensive report
         """
         print("\n" + "=" * 80)
-        print("🚨 INJURY ALERT 🚨")
-        print("=" * 80)
-        print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"New/Updated Injuries: {len(injuries)}")
-        print("(Only showing injuries from the last 24 hours)\n")
+        if alert_mode:
+            print("🚨 INJURY ALERT 🚨")
+            print("=" * 80)
+            print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            print(f"New/Updated Injuries: {len(injuries)}")
+            print("(Recent injuries requiring immediate attention)\n")
+        else:
+            print("📊 COMPREHENSIVE INJURY REPORT 📊")
+            print("=" * 80)
+            print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            print(f"Total Injured Players: {len(injuries)}")
+            print("(All current injuries with ML predictions)\n")
 
         for injury in injuries:
             alert_type = injury.get('alert_type', 'UPDATE')
@@ -97,6 +107,66 @@ class Notifier:
                 print(f"   🏈 OWNED BY: {owned_by} (Manager: {manager})")
             else:
                 print(f"   📍 Available as Free Agent")
+
+            # ML Prediction information
+            ml_pred = injury.get('ml_prediction')
+            if ml_pred and not ml_pred.get('error'):
+                print(f"\n   🤖 ML PREDICTION:")
+
+                # Check if overridden by news
+                if ml_pred.get('overridden_by_news'):
+                    print(f"      📰 NEWS-ADJUSTED TIMELINE:")
+                    return_week = ml_pred.get('return_week', '?')
+                    weeks_out = ml_pred.get('weeks_out', '?')
+                    print(f"      Expected return: NFL Week {return_week} ({weeks_out} weeks from now)")
+                    print(f"      Predicted days out: {ml_pred.get('predicted_days', '?')} days")
+                    print(f"      Confidence range: {ml_pred.get('confidence_low', '?')}-{ml_pred.get('confidence_high', '?')} days")
+
+                    # Show original ML prediction
+                    ml_orig = ml_pred.get('ml_original', {})
+                    if ml_orig:
+                        print(f"\n      📊 ML Model (before news): NFL Week {ml_orig.get('return_week', '?')} ({ml_orig.get('predicted_days', '?')} days)")
+
+                    # Show override reason
+                    print(f"\n      ⚠️  Override reason:")
+                    print(f"         {ml_pred.get('override_reason', 'News reports different timeline')}")
+                    if ml_pred.get('news_source'):
+                        print(f"         Source: {ml_pred['news_source']}")
+                else:
+                    print(f"      ML Model prediction:")
+                    current_week = ml_pred.get('current_week', '?')
+                    return_week = ml_pred.get('return_week', '?')
+                    weeks_out = ml_pred.get('weeks_out', '?')
+                    print(f"      Expected return: NFL Week {return_week} ({weeks_out} weeks from now)")
+                    print(f"      Predicted days out: {ml_pred.get('predicted_days', '?')} days")
+                    print(f"      Confidence range: {ml_pred.get('confidence_low', '?')}-{ml_pred.get('confidence_high', '?')} days")
+
+                print(f"      Return date: {ml_pred.get('expected_return_date', 'Unknown')}")
+
+            # Injury Risk Assessment
+            risk = injury.get('risk_assessment')
+            if risk:
+                risk_level = risk.get('risk_level', 'Unknown')
+                risk_score = risk.get('risk_score', 0)
+                risk_msg = risk.get('message', '')
+
+                # Color-coded risk indicator
+                if risk_level == 'Critical':
+                    risk_icon = "🔴"
+                elif risk_level == 'High':
+                    risk_icon = "🟠"
+                elif risk_level == 'Moderate':
+                    risk_icon = "🟡"
+                elif risk_level == 'Low':
+                    risk_icon = "🟢"
+                else:
+                    risk_icon = "⚪"
+
+                print(f"\n   {risk_icon} INJURY RISK: {risk_level} ({risk_score}/100)")
+                if risk_msg:
+                    print(f"      {risk_msg}")
+                if risk.get('chronic_areas'):
+                    print(f"      Chronic issues: {', '.join(risk['chronic_areas'])}")
 
             # News sentiment information
             severity = injury.get('top_news_severity', 'N/A')
@@ -229,12 +299,13 @@ class Notifier:
         # 3. HTML email template
         # 4. smtplib or similar library
 
-    def format_summary_report(self, all_injuries: List[Dict]) -> str:
+    def format_summary_report(self, all_injuries: List[Dict], show_all: bool = True) -> str:
         """
-        Format a summary report of all current injuries with news and sentiment
+        Format a summary report of all current injuries with ML predictions
 
         Args:
             all_injuries: All current injuries
+            show_all: If True, show comprehensive report with ML predictions for all
 
         Returns:
             Formatted report string
@@ -279,10 +350,10 @@ class Notifier:
             for team, players in sorted(by_team.items()):
                 report.append(f"\n{team}:")
                 for injury in players:
-                    report.append(f"  • {injury['name']} ({injury['position']}, {injury['team']})")
-                    report.append(f"    Status: {injury['injury_status']}")
+                    report.append(f"\n  • {injury['name']} ({injury['position']}, {injury['team']})")
+                    report.append(f"    ├─ Status: {injury['injury_status']}")
                     if injury.get('injury_body_part'):
-                        report.append(f"    Injury: {injury['injury_body_part']}")
+                        report.append(f"    ├─ Injury: {injury['injury_body_part']}")
 
                     # Show sentiment analysis
                     severity = injury.get('top_news_severity', 'N/A')
@@ -300,51 +371,89 @@ class Notifier:
                     else:
                         severity_icon = "⚫"
 
-                    report.append(f"    {severity_icon} News Sentiment: {severity} ({sentiment_score:.2f})")
+                    report.append(f"    ├─ {severity_icon} News Sentiment: {severity} ({sentiment_score:.2f})")
+
+                    # Show ML prediction if available and show_all is True
+                    if show_all:
+                        ml_pred = injury.get('ml_prediction')
+                        if ml_pred and not ml_pred.get('error'):
+                            return_week = ml_pred.get('return_week', '?')
+                            weeks_out = ml_pred.get('weeks_out', '?')
+                            days = ml_pred.get('predicted_days', '?')
+
+                            report.append(f"    │")
+                            if ml_pred.get('overridden_by_news'):
+                                report.append(f"    ├─ 📰 NEWS-ADJUSTED TIMELINE:")
+                                report.append(f"    │    Expected return: NFL Week {return_week} ({weeks_out} weeks, ~{days} days)")
+                                ml_orig = ml_pred.get('ml_original', {})
+                                if ml_orig:
+                                    report.append(f"    │    ML model said: Week {ml_orig.get('return_week', '?')} ({ml_orig.get('predicted_days', '?')} days)")
+                                    override_reason = ml_pred.get('override_reason', 'News reports different timeline')
+                                    # Truncate long override reasons (increased to 160 chars)
+                                    if len(override_reason) > 160:
+                                        override_reason = override_reason[:157] + "..."
+                                    report.append(f"    │    Override: {override_reason}")
+                            else:
+                                report.append(f"    ├─ 🤖 ML PREDICTION:")
+                                report.append(f"    │    Expected return: NFL Week {return_week} ({weeks_out} weeks, ~{days} days)")
+
+                        # Show risk assessment
+                        risk = injury.get('risk_assessment')
+                        if risk:
+                            risk_level = risk.get('risk_level', 'Unknown')
+                            risk_score = risk.get('risk_score', 0)
+                            risk_icon = self._get_risk_icon(risk_level)
+                            risk_message = risk.get('message', '')
+                            chronic_areas = risk.get('chronic_areas', [])
+
+                            report.append(f"    │")
+                            report.append(f"    ├─ ⚠️  FUTURE INJURY RISK: {risk_icon} {risk_level} ({risk_score}/100)")
+                            if risk_message and risk_message != 'Clean injury history - low risk of future problems':
+                                report.append(f"    │    {risk_message}")
+                            if chronic_areas:
+                                report.append(f"    │    Chronic areas: {', '.join(chronic_areas)}")
 
                     # Show backup info in summary
                     backup = injury.get('backup_player')
                     if backup:
+                        report.append(f"    │")
                         if backup.get('is_injured'):
                             backup_status = backup.get('injury_status', 'Unknown')
-                            report.append(f"    👉 Backup: {backup['name']} - 🚑 INJURED ({backup_status})")
+                            report.append(f"    └─ 👉 Backup: {backup['name']} - 🚑 INJURED ({backup_status})")
                         elif backup['available']:
-                            report.append(f"    👉 Backup: {backup['name']} - ✅ AVAILABLE")
+                            report.append(f"    └─ 👉 Backup: {backup['name']} - ✅ AVAILABLE")
                         else:
-                            report.append(f"    👉 Backup: {backup['name']} - Owned by {backup['owned_by_team']}")
+                            report.append(f"    └─ 👉 Backup: {backup['name']} - Owned by {backup['owned_by_team']}")
+                    else:
+                        report.append("")  # Add spacing between players
 
-        if free_agents:
-            report.append("\n" + "-" * 80)
-            report.append("📍 INJURED FREE AGENTS (Top Targets)")
-            report.append("-" * 80)
-
-            for injury in free_agents[:10]:  # Show top 10
-                report.append(f"  • {injury['name']} ({injury['position']}, {injury['team']})")
-                report.append(f"    Status: {injury['injury_status']}")
-
-                # Show sentiment for free agents too
-                severity = injury.get('top_news_severity', 'N/A')
-                sentiment_score = injury.get('top_news_sentiment', 0.0)
-
-                if severity == 'Severe':
-                    severity_icon = "🔴"
-                elif severity == 'Moderate':
-                    severity_icon = "🟡"
-                elif severity == 'Neutral':
-                    severity_icon = "⚪"
-                elif severity == 'Positive':
-                    severity_icon = "🟢"
-                else:
-                    severity_icon = "⚫"
-
-                if severity != 'N/A':
-                    report.append(f"    {severity_icon} Sentiment: {severity} ({sentiment_score:.2f})")
+        # Removed free agents section per user request
 
         report.append("\n" + "=" * 80)
-        report.append("Legend: 🔴 Severe (<-0.5) | 🟡 Moderate (-0.5 to -0.2) | ⚪ Neutral | 🟢 Positive (>0.2)")
+        report.append("📊 LEGEND:")
+        report.append("-" * 80)
+        report.append("News Sentiment: 🔴 Severe (<-0.5) | 🟡 Moderate (-0.5 to -0.2) | ⚪ Neutral | 🟢 Positive (>0.2)")
+        report.append("")
+        report.append("Future Injury Risk: Predicts likelihood of future injury problems based on:")
+        report.append("  • Injury frequency (how often they get hurt)")
+        report.append("  • Recurrence (same body part injured multiple times)")
+        report.append("  • Current injury severity")
+        report.append("  • Recovery patterns (slow vs. fast healers)")
+        report.append("  Risk Levels: 🔴 Critical (75+) | 🟠 High (60-74) | 🟡 Moderate (40-59) | 🟢 Low (<40)")
         report.append("=" * 80 + "\n")
 
         return "\n".join(report)
+
+    def _get_risk_icon(self, risk_level: str) -> str:
+        """Get emoji for risk level"""
+        emojis = {
+            'Critical': '🔴',
+            'High': '🟠',
+            'Moderate': '🟡',
+            'Low': '🟢',
+            'Minimal': '⚪'
+        }
+        return emojis.get(risk_level, '⚪')
 
 
 if __name__ == "__main__":
