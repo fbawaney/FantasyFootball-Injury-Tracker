@@ -1,34 +1,66 @@
-<<<<<<< HEAD
-# Fantasy Football Injury Tracker
+# Fantasy Football Injury Tracker with ML Predictions
 
-A comprehensive tool to monitor NFL player injuries for your Yahoo Fantasy Football league. Get real-time alerts when owned players or top free agents are injured.
+A comprehensive tool to monitor NFL player injuries for your Yahoo Fantasy Football league with **ML-powered return timeline predictions** and **news-based intelligence**.
 
-## Features
+## ✨ Key Features
 
-  - A player gets newly injured
-  - An injury status worsens (e.g., Questionable → Out)
-  - Analyzes RSS news feeds from Yahoo Sports and Rotoworld
-  - Color-coded severity indicators (🔴 Severe, 🟡 Moderate, ⚪ Neutral, 🟢 Positive)
-  - Sentiment scoring from -1 (very negative) to +1 (very positive)
-  - Identifies direct backup players for injured starters
-  - Shows backup availability (owned vs. free agent)
-  - **Warns if backup is also injured** to prevent bad pickups
-  - Console alerts (default)
-  - Desktop notifications (macOS, Linux, Windows)
-  - Email alerts (coming soon)
+### 🤖 ML-Powered Predictions
+- **Return Timeline Predictions**: Random Forest model predicts when injured players will return
+- **News-Based Overrides**: Automatically detects season-ending injuries, surgeries, and return timelines from NFL news
+- **Injury Risk Scoring**: 0-100 risk score predicting future injury problems based on historical patterns
+- **NFL Rule Enforcement**: Respects IR/PUP minimums (4 weeks), injury designations
 
-## Data Sources
+### 📊 Comprehensive Injury Monitoring
+- Real-time alerts when players get injured or status worsens
+- Tracks all owned players + top free agents
+- Dual reporting modes: **Alert Mode** (urgent new injuries) vs **Comprehensive Mode** (all injuries)
+- Configurable alert window (default: 24 hours)
 
-### Primary: Sleeper API
+### 📰 News Intelligence
+- Analyzes RSS feeds from Yahoo Sports and Rotoworld
+- Sentiment analysis with color-coded indicators (🔴 Severe, 🟡 Moderate, ⚪ Neutral, 🟢 Positive)
+- Extracts specific timelines from headlines ("out 4-6 weeks", "season-ending", "activated")
+- Overrides unrealistic ML predictions with confirmed news
 
-### Future Enhancements
+### 🏈 Depth Chart Integration
+- Identifies direct backup players using official ESPN/NFL depth charts
+- Shows if backup is available as free agent or already owned
+- **Warns if backup is also injured** to prevent bad pickups
 
-## Installation
+### 📈 Enhanced Reporting
+- Clean tree-structured console output
+- Detailed markdown reports (`injury_news.md`)
+- Shows ML prediction + news override + risk score for each player
+- Clear legends explaining all metrics
 
-### 1. Clone or Download
+## 🚀 Quick Start (This Repo is Pre-Configured)
+
+This repository is already configured for a specific Yahoo Fantasy Football league. The `.env` file contains working credentials.
+
+### Just Run It:
 
 ```bash
-cd /path/to/fantasyfootball
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Setup ML model (one-time)
+python setup_ml.py
+
+# 3. Run once
+python monitor.py --once
+```
+
+The first time you run it, you'll need to authenticate with Yahoo OAuth (browser will open automatically).
+
+## 📦 Installation for Your Own League
+
+Want to use this tracker for your own fantasy league? Follow these steps:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/fbawaney/FantasyFootball-Injury-Tracker.git
+cd FantasyFootball-Injury-Tracker
 ```
 
 ### 2. Install Dependencies
@@ -37,58 +69,63 @@ cd /path/to/fantasyfootball
 pip install -r requirements.txt
 ```
 
-Required packages:
-
 ### 3. Set Up Yahoo API Credentials
 
-#### Create Yahoo App
+#### Create a Yahoo Developer App
 
 1. Go to [Yahoo Developer Network](https://developer.yahoo.com/apps/)
 2. Click "Create an App"
-3. Fill in the form:
-   - **Application Name**: Fantasy Injury Tracker (or your choice)
+3. Fill in:
+   - **Application Name**: Fantasy Injury Tracker
    - **Application Type**: Web Application
    - **Callback Domain**: `localhost`
    - **Redirect URI(s)**: `https://localhost:8000`
-   - **API Permissions**: Fantasy Sports - Read
+   - **API Permissions**: Fantasy Sports - Read ✅
 
-4. Note your **Client ID** and **Client Secret**
+4. Save your **Client ID** and **Client Secret**
 
 #### Find Your League ID
 
 1. Log into Yahoo Fantasy Football
 2. Go to your league page
-3. Look at the URL - it will look like:
+3. Look at the URL:
    ```
    https://football.fantasysports.yahoo.com/f1/12345/...
+                                                ^^^^^
    ```
    The number `12345` is your league ID
 
-### 4. Configure Environment Variables
+### 4. Configure Your Environment
+
+Copy the example file and edit it:
 
 ```bash
 cp .env.example .env
+nano .env  # or use your favorite editor
 ```
 
-Edit `.env` and fill in your credentials:
+Fill in your credentials:
 
 ```bash
-# Yahoo Fantasy Sports API Credentials
 YAHOO_CLIENT_ID=your_client_id_here
 YAHOO_CLIENT_SECRET=your_client_secret_here
-
-# Yahoo Fantasy League Settings
 YAHOO_LEAGUE_ID=your_league_id_here
 YAHOO_GAME_KEY=nfl
 
-# Notification Settings
-NOTIFICATION_METHOD=console  # Options: console, email, desktop
-CHECK_INTERVAL=30  # Check every 30 minutes
+NOTIFICATION_METHOD=console
+CHECK_INTERVAL=30
+ALERT_WINDOW_HOURS=24
 ```
 
-### 5. First Time Setup - OAuth Authentication
+### 5. Setup ML Model
 
-The first time you run the tool, it will open a browser for OAuth authentication:
+```bash
+python setup_ml.py
+```
+
+This creates the ML model and injury database (one-time setup).
+
+### 6. First Run - OAuth Authentication
 
 ```bash
 python monitor.py --once
@@ -98,135 +135,185 @@ python monitor.py --once
 2. Log into Yahoo and authorize the app
 3. Copy the verification code
 4. Paste it into the terminal
-5. The tool will save your token for future use
+5. Your token is saved for future use
 
-## Usage
+## 📖 Usage
 
-### Run Continuous Monitoring (Recommended)
-
-Monitor injuries continuously with periodic checks:
+### Continuous Monitoring (Recommended)
 
 ```bash
 python monitor.py
 ```
 
-This will:
-- Check for injuries immediately on startup
-- Continue checking every 30 minutes (or your configured interval)
-- Send alerts when new injuries are detected
-- Run until you stop it with Ctrl+C
+- Checks immediately on startup
+- Re-checks every 30 minutes (configurable)
+- Runs until you stop it (Ctrl+C)
 
-### Run Single Check
-
-Run a one-time injury check and exit:
+### Single Check
 
 ```bash
 python monitor.py --once
 ```
 
-### View Current Injury Report
+- Runs one check and exits
+- Perfect for cron jobs/schedulers
 
-Show current injuries without checking for updates:
+### View Saved Report
 
 ```bash
 python monitor.py --report
 ```
 
-### Test Notifications
+- Shows the last saved injury report
+- No API calls made
 
-Test your notification system:
+### Test Notifications
 
 ```bash
 python monitor.py --test
 ```
 
-## Notification Methods
+## 📊 What You Get
 
-### Console (Default)
-
-Displays alerts in your terminal with detailed formatting including sentiment analysis:
+### Console Output Example:
 
 ```
-🚨 INJURY ALERT 🚨
-Time: 2025-10-15 14:30:00
-New/Updated Injuries: 2
+================================================================================
+📊 INJURY SUMMARY REPORT WITH NEWS SENTIMENT
+================================================================================
+Generated: 2025-10-18 18:39:28
+Total Injuries: 41
+  - Owned Players: 31
+  - Free Agents: 10
 
-🆕 NEW INJURY
-   Player: Christian McCaffrey
-   Position: RB | Team: SF
-   Status: Out
-   Injury: Achilles
-   🏈 OWNED BY: Team Alpha (Manager: John Doe)
+--------------------------------------------------------------------------------
+⚠️  OWNED PLAYERS WITH INJURIES
+--------------------------------------------------------------------------------
 
-   🔴 NEWS SENTIMENT: Severe (Score: -0.65)
+Team Alpha:
 
-   💡 DIRECT BACKUP:
-      Jordan Mason (RB, SF)
-      ✅ AVAILABLE as Free Agent - ADD NOW!
-
-   Source: Sleeper API
+  • Christian McCaffrey (RB, SF)
+    ├─ Status: IR
+    ├─ Injury: Achilles
+    ├─ 🔴 News Sentiment: Severe (-0.85)
+    │
+    ├─ 📰 NEWS-ADJUSTED TIMELINE:
+    │    Expected return: NFL Week 18 (11 weeks, ~77 days)
+    │    ML model said: Week 14 (35 days)
+    │    Override: Season-ending: "49ers RB ruled out for remainder of season"
+    │
+    ├─ ⚠️  FUTURE INJURY RISK: 🟠 High (72.5/100)
+    │    Injury-prone: 4 injuries in last 6 months
+    │    Recurring Hamstring injury (3x)
+    │    Chronic areas: Hamstring, Achilles
+    │
+    └─ 👉 Backup: Jordan Mason - ✅ AVAILABLE
 ```
 
-### Desktop Notifications
+### Markdown Report (`injury_news.md`):
 
-Set `NOTIFICATION_METHOD=desktop` in your `.env` file.
+- Detailed tables of all injured players
+- Sortable by severity, status, team
+- News headlines with links
+- ML predictions and risk assessments
+- Backup player information
 
-Shows native OS notifications:
-- **macOS**: Uses `osascript`
-- **Linux**: Uses `notify-send`
-- **Windows**: Uses PowerShell toast notifications
+## 🧠 How ML Predictions Work
 
-### Email (Coming Soon)
+### Random Forest Model
+- Trained on historical NFL injury data
+- Features: injury type, position, player history, severity
+- Predicts recovery timeline in days
+- Provides confidence intervals (min-max range)
 
-Email notifications require SMTP configuration (Gmail, SendGrid, etc.)
+### NFL Rule Enforcement
+- **IR/PUP**: Minimum 4 weeks (28 days)
+- **Out**: Minimum 1 week (7 days)
+- **Questionable/Doubtful**: No minimum
 
-## Project Structure
+### News-Based Overrides
+When news is more specific than the ML model, it takes precedence:
+
+| News Detected | Override Action |
+|---------------|----------------|
+| "season-ending" | Set to rest of season |
+| "surgery scheduled" | Set to 6+ weeks |
+| "activated from IR" | Set to 0-7 days |
+| "out 4-6 weeks" | Use extracted timeline |
+| "week-to-week" | Set to 1-3 weeks |
+| "day-to-day" | Set to 1-7 days |
+
+## ⚠️ Risk Score Explained
+
+The **Future Injury Risk** score (0-100) predicts likelihood of future injury problems:
+
+### Factors (Weighted):
+- **Frequency (30%)**: How often they get injured
+- **Recurrence (25%)**: Same body part injured multiple times
+- **Severity (20%)**: Current injury status (IR/PUP/Out)
+- **Recency (15%)**: Recent vs. old injury patterns
+- **Recovery (10%)**: Slow vs. fast healing history
+
+### Risk Levels:
+- 🔴 **Critical (75-100)**: Very high risk - frequent injuries, slow recovery
+- 🟠 **High (60-74)**: Significant concern - multiple risk factors
+- 🟡 **Moderate (40-59)**: Some concern - notable history
+- 🟢 **Low (0-39)**: Minimal concern - clean history
+
+**Use it to**: Decide whether to handcuff players, make trades, or avoid injury-prone pickups.
+
+## 📁 Project Structure
 
 ```
 fantasyfootball/
-├── monitor.py              # Main monitoring script
-├── yahoo_client.py         # Yahoo Fantasy API client
-├── injury_tracker.py       # Injury data fetching, matching, and sentiment analysis
-├── notifier.py            # Notification system with sentiment display
-├── depth_chart.py         # NFL depth chart integration
-├── requirements.txt       # Python dependencies
-├── .env                   # Configuration (you create this)
-├── .env.example          # Configuration template
-├── .gitignore            # Git ignore rules
-├── README.md             # This file
-├── QUICKSTART.md         # Quick start guide
-├── injury_data.json      # Cached injury data (auto-generated)
-├── injury_news.md        # Detailed injury news report (auto-generated)
-└── token.json            # OAuth tokens (auto-generated)
+├── monitor.py                    # Main monitoring script
+├── yahoo_client.py               # Yahoo Fantasy API client
+├── injury_tracker.py             # Core injury tracking + ML integration
+├── notifier.py                   # Alert system with formatting
+├── depth_chart.py                # ESPN depth chart integration
+├── news_analyzer.py              # News timeline extraction ✨ NEW
+├── ml_predictor.py               # ML model for predictions ✨ NEW
+├── risk_scorer.py                # Injury risk assessment ✨ NEW
+├── injury_database.py            # Historical injury tracking ✨ NEW
+├── historical_data_loader.py     # Load injury history ✨ NEW
+├── setup_ml.py                   # One-time ML setup
+├── test_ml_validation.py         # ML validation tests
+├── requirements.txt              # Python dependencies
+├── .env                          # Your configuration (pre-filled)
+├── .env.example                  # Template for others
+├── models/                       # Trained ML model ✨ NEW
+│   └── injury_predictor.pkl
+├── injury_data.json              # Cached data (auto-generated)
+├── injury_news.md                # Detailed report (auto-generated)
+└── token.json                    # OAuth token (auto-generated)
 ```
 
-## How It Works
+## 🗂️ Data Sources
 
-1. **Fetch Players**: Gets all players from your Yahoo league (owned + top free agents)
-2. **Fetch News**: Pulls RSS feeds from Yahoo Sports and Rotoworld
-3. **Get Injury Data**: Fetches latest injury info from Sleeper API
-4. **Match Players**: Intelligently matches Yahoo players with injury data by name and team
-5. **Analyze Sentiment**: Uses TextBlob to analyze news sentiment for each injured player
-6. **Check Depth Charts**: Identifies backup players and checks if they're also injured
-7. **Detect Changes**: Compares current injuries with previous check to find:
-   - New injuries (within 24-hour alert window)
-   - Worsened injury status
-8. **Send Alerts**: Notifies you of changes with sentiment analysis and backup info
-9. **Generate Reports**: Creates both console display and markdown file (injury_news.md)
-10. **Save State**: Stores current injuries for next comparison
+| Source | Purpose | Official? |
+|--------|---------|-----------|
+| **Yahoo Fantasy API** | League rosters, player ownership | ✅ Official |
+| **Sleeper API** | Injury statuses, designations | ✅ Official |
+| **ESPN API** | NFL depth charts | ✅ Official |
+| **Yahoo Sports RSS** | News headlines | ✅ Official |
+| **Rotoworld RSS** | Injury news | ✅ Official |
 
-## Injury Status Levels
+## ⚙️ Configuration Options
 
-The tool tracks these injury designations:
+Edit `.env` to customize:
 
-- **IR** (Injured Reserve) - Out for extended period
-- **Out** - Will not play
-- **Doubtful** - Unlikely to play
-- **Questionable** - Uncertain
-- **PUP** (Physically Unable to Perform)
-- **Suspended** - League suspension
+```bash
+# Alert window - only alert on injuries within this timeframe
+ALERT_WINDOW_HOURS=24           # Default: 24 hours
 
-## Scheduling Options
+# Check interval for continuous monitoring
+CHECK_INTERVAL=30               # Default: 30 minutes
+
+# Notification method
+NOTIFICATION_METHOD=console     # Options: console, desktop, email
+```
+
+## 📅 Scheduling Options
 
 ### Keep Running in Terminal
 
@@ -240,137 +327,83 @@ python monitor.py
 nohup python monitor.py > injury_monitor.log 2>&1 &
 ```
 
-### Use a Scheduler
+### Cron Job (Linux/Mac) - Every 30 Minutes
 
-**Linux/Mac (cron)**: Run every 30 minutes
+```bash
+crontab -e
+```
+
+Add:
 ```bash
 */30 * * * * cd /path/to/fantasyfootball && python monitor.py --once
 ```
 
-**Windows (Task Scheduler)**: Create a task to run `monitor.py --once` every 30 minutes
+### Windows Task Scheduler
 
-### Run in Docker (Optional)
+Create a task to run `python monitor.py --once` every 30 minutes.
 
-Create a `Dockerfile`:
-```dockerfile
-FROM python:3.9-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-CMD ["python", "monitor.py"]
-```
-
-## Troubleshooting
+## 🐛 Troubleshooting
 
 ### OAuth Issues
 
-If you get authentication errors:
-1. Delete `token.json`
-2. Run `python monitor.py --once` to re-authenticate
-3. Make sure your redirect URI in Yahoo app is `https://localhost:8000`
+```bash
+# Delete token and re-authenticate
+rm token.json
+python monitor.py --once
+```
+
+### ML Model Issues
+
+```bash
+# Rebuild ML model
+python setup_ml.py
+```
 
 ### No Injuries Detected
 
-- Make sure your `.env` file is configured correctly
-- Verify your league ID is correct
-- Check that Sleeper API is accessible: `curl https://api.sleeper.app/v1/players/nfl`
-
-### Rate Limiting
-
-The tool includes rate limiting protections. If you get rate limited:
-- Increase `CHECK_INTERVAL` in your `.env`
-- The Sleeper API is generous and shouldn't rate limit normal usage
+- Verify `.env` has correct league ID
+- Check Yahoo OAuth is working
+- Test Sleeper API: `curl https://api.sleeper.app/v1/players/nfl`
 
 ### Desktop Notifications Not Working
 
-**macOS**: Should work by default
-**Linux**: Install `notify-send`: `sudo apt-get install libnotify-bin`
-**Windows**: Make sure PowerShell execution policy allows scripts
+- **macOS**: Should work by default
+- **Linux**: `sudo apt-get install libnotify-bin`
+- **Windows**: Check PowerShell execution policy
 
-## Advanced Configuration
+## 📚 Documentation
 
-### Monitor Specific Positions
+- **ML_FEATURES.md** - Complete ML capabilities guide
+- **NEWS_INTEGRATION_ANALYSIS.md** - How news integration works
+- **ML_PREDICTION_FIXES.md** - Technical bug fixes
+- **REPORTING_MODES.md** - Alert vs Comprehensive modes
+- **DEPTH_CHART_SOURCE.md** - ESPN API documentation
 
-Edit `yahoo_client.py` line 122 to change free agent filters:
+## 🔒 Privacy & Security
 
-```python
-# Only monitor RB and WR free agents
-free_agents_rb = self.get_free_agents(position='RB', count=50)
-free_agents_wr = self.get_free_agents(position='WR', count=50)
-```
+- Yahoo credentials stored locally in `.env`
+- OAuth tokens cached in `token.json`
+- No external services except official APIs
+- All data processing happens locally
+- **Note**: This repo's `.env` is public (read-only API, league data is public anyway)
 
-### Adjust Alert Sensitivity
+## 🤝 Contributing
 
-Edit `injury_tracker.py` line 188 to change which statuses trigger alerts:
-
-```python
-# Only alert on severe injuries
-if injury_status in ['Out', 'IR', 'PUP']:
-    # ... alert logic
-```
-
-### Custom Notification Format
-
-Edit `notifier.py` to customize alert messages and formatting.
-
-## API Rate Limits
-
-- **Yahoo Fantasy API**: Rate limits vary, tool handles them gracefully
-- **Sleeper API**: Very generous limits, no API key required
-- Default 30-minute check interval is well within all limits
-
-## Privacy & Security
-
-- Your Yahoo credentials are stored locally in `.env` (never committed to git)
-- OAuth tokens are cached locally in `token.json`
-- No data is sent to external services except Yahoo and Sleeper APIs
-- Injury data is cached locally in `injury_data.json`
-
-## Sentiment Analysis
-
-The tool analyzes news headlines using TextBlob to provide actionable sentiment scores:
-
-- **Severe** (🔴): Score < -0.5 - Very negative news, major concern
-- **Moderate** (🟡): Score -0.5 to -0.2 - Somewhat negative, monitor closely
-- **Neutral** (⚪): Score -0.2 to 0.2 - Mixed or neutral reporting
-- **Positive** (🟢): Score > 0.2 - Encouraging news
-
-This helps prioritize which injuries require immediate action vs. routine monitoring.
-
-## Contributing
-
-Feel free to enhance this tool! Some ideas:
-- Add more injury data sources
+Ideas for enhancements:
+- Import real historical NFL injury data
+- Add practice report tracking (DNP/Limited/Full)
 - Implement email notifications
-- Add web dashboard
-- Create mobile app notifications
-- Improve sentiment analysis algorithms
-- Implement ML predictions for return timelines
-- Add historical injury tracking
+- Create web dashboard
+- Mobile app notifications
 
-## License
+## 📄 License
 
-This is a personal tool. Use it freely for your fantasy football leagues!
+This is a personal project. Feel free to use it for your fantasy leagues!
 
-## Disclaimer
+## ⚠️ Disclaimer
 
-This tool uses publicly available APIs and data. It is not affiliated with Yahoo, NFL, or any other sports organization. Injury information should be verified with official team sources before making fantasy decisions.
-
-## Support
-
-For issues or questions:
-1. Check the Troubleshooting section above
-2. Verify your `.env` configuration
-3. Test individual components:
-   - `python yahoo_client.py` - Test Yahoo connection
-   - `python injury_tracker.py` - Test injury data fetching
-   - `python notifier.py` - Test notifications
+Not affiliated with Yahoo, NFL, ESPN, or Sleeper. Injury information should be verified with official team sources before making fantasy decisions.
 
 ---
 
-**Good luck with your fantasy season!** 🏈
-=======
-# FantasyFootball-Injury-Tracker
-A tracker for injured players owned by league mates in our Yahoo Fantasy Football league
->>>>>>> 682033c0a6d331b972560d4041f3d910590760d4
+**Good luck with your fantasy season!** 🏈🤖
