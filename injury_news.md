@@ -1,181 +1,92 @@
 # Injury News Report
 
-*Generated: 2025-10-17 22:15:18*
+*Generated: 2025-10-21 21:58:28*
 
 ## Summary
 
-- **Total Injured Players**: 41
-- **Players with Severe News**: 1
-- **Players with Moderate News**: 2
+- **Total Injured Players**: 38
+- **Players with Severe News**: 0
+- **Players with Moderate News**: 1
 
 ## Detailed Injury Report
 
 | Player | Team | Position | Status | Top News | Sentiment | Severity | Owner |
 |--------|------|----------|--------|----------|-----------|----------|-------|
-| Garrett Wilson | NYJ | WR | Doubtful | [Jets' Garrett Wilson listed as doubtful for Wee...](https://sny.tv/articles/jets-garrett-wilson-injury-status-week-7-panthers) | -0.80 | 🔴 Severe | B |
-| Darnell Mooney | Atl | WR | Questionable | [Jake Matthews, Darnell Mooney questionable to p...](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jake-matthews-darnell-mooney-questionable-to-play-for-the-falcons) | -0.50 | 🟡 Moderate | Hans Gruber |
-| David Njoku | Cle | TE | Out | [Mason Graham questionable, David Njoku out for ...](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mason-graham-questionable-david-njoku-out-for-browns) | -0.50 | 🟡 Moderate | Cato |
-| George Kittle | SF | TE | IR | [49ers place WR Marquez Valdes-Scantling on inju...](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/49ers-place-wr-marquez-valdes-scantling-on-injured-reserve) | 0.00 | ⚪ Neutral | Hans Gruber |
-| Josh Downs | Ind | WR | Out | [Josh Downs among Colts ruled out, AD Mitchell w...](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/josh-downs-among-colts-ruled-out-ad-mitchell-will-play) | 0.00 | ⚪ Neutral | quis |
-| Stefon Diggs | NE | WR | Questionable | [Cowboys' Trevon Diggs out against Commanders af...](https://sports.yahoo.com/nfl/breaking-news/article/cowboys-trevon-diggs-out-against-commanders-after-accident-at-home-lands-him-in-concussion-protocol-194246908.html) | 0.00 | ⚪ Neutral | B |
-| Terry McLaurin | Was | WR | Out | [Commanders rule Terry McLaurin out again this week](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/commanders-rule-terry-mclaurin-out-again-this-week) | 0.00 | ⚪ Neutral | B |
-| Ricky Pearsall | SF | WR | Out | [Brock Purdy, Ricky Pearsall out for 49ers-Falco...](https://www.nbcsportsbayarea.com/nfl/san-francisco-49ers/george-kittle-brock-purdy/1882036/?partner=yahoo) | 0.00 | ⚪ Neutral | M |
-| Brock Purdy | SF | QB | Out | [Brock Purdy, Ricky Pearsall out for 49ers-Falco...](https://www.nbcsportsbayarea.com/nfl/san-francisco-49ers/george-kittle-brock-purdy/1882036/?partner=yahoo) | 0.00 | ⚪ Neutral | Ovidio |
-| Mike Evans | TB | WR | Questionable | [Mike Evans did not practice Friday](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mike-evans-did-not-practice-friday) | 0.00 | ⚪ Neutral | Ovidio |
-| Lamar Jackson | Bal | QB | Out | [Puka Nacua ruled out for Rams against Jaguars i...](https://sports.yahoo.com/article/puka-nacua-ruled-rams-against-155525617.html) | 0.00 | ⚪ Neutral | Cato |
-| J.J. McCarthy | Min | QB | Questionable | [Carson Wentz will start for Vikings Sunday](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-wentz-will-start-for-vikings-sunday) | 0.00 | ⚪ Neutral | Matthew |
-| Calvin Ridley | Ten | WR | Out | [Calvin Ridley among Titans ruled out for Week 7](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/calvin-ridley-among-titans-ruled-out-for-week-7) | 0.00 | ⚪ Neutral | jim |
-| Puka Nacua | LAR | WR | Out | [Puka Nacua ruled out for Rams against Jaguars i...](https://sports.yahoo.com/article/puka-nacua-ruled-rams-against-155525617.html) | 0.00 | ⚪ Neutral | jim |
-| Mike Evans | TB | WR | Questionable | [Mike Evans did not practice Friday](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mike-evans-did-not-practice-friday) | 0.00 | ⚪ Neutral | None |
-| Stefon Diggs | NE | WR | Questionable | [Cowboys' Trevon Diggs out against Commanders af...](https://sports.yahoo.com/nfl/breaking-news/article/cowboys-trevon-diggs-out-against-commanders-after-accident-at-home-lands-him-in-concussion-protocol-194246908.html) | 0.00 | ⚪ Neutral | None |
-| Emeka Egbuka | TB | WR | Questionable | No recent news | 0.00 | N/A | Hans Gruber |
+| Josh Johnson | Was | QB | Out | [Woody Johnson slams Jets' QB play, defends Aaro...](https://sports.yahoo.com/nfl/article/woody-johnson-slams-jets-qb-play-defends-aaron-glenn-hard-when-you-have-a-qb-with-the-rating-that-weve-got-182159938.html) | -0.29 | 🟡 Moderate | None |
+| Terry McLaurin | Was | WR | Out | [Deebo Samuel, Terry McLaurin are expected to re...](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/deebo-samuel-terry-mclaurin-are-expected-to-return-to-full-practices-this-week) | 0.12 | ⚪ Neutral | B |
+| Garrett Wilson | NYJ | WR | Out | [Russ claps back at Sean Payton + Jets owner rip...](https://sports.yahoo.com/nfl/article/russ-claps-back-at-sean-payton--jets-owner-rips-justin-fields-010406851.html) | 0.00 | ⚪ Neutral | B |
+| Kendre Miller | NO | RB | IR | [Saints sign RB Velus Jones Jr. to the active ro...](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/saints-sign-rb-velus-jones-jr-to-the-active-roster-from-the-practice-squad) | -0.13 | ⚪ Neutral | -- hidden -- |
+| Deebo Samuel | Was | WR | Out | [Deebo Samuel, Terry McLaurin are expected to re...](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/deebo-samuel-terry-mclaurin-are-expected-to-return-to-full-practices-this-week) | 0.12 | ⚪ Neutral | Jonathan |
+| J.J. McCarthy | Min | QB | Out | [Carson Wentz will start for Vikings on Thursday](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-wentz-will-start-for-vikings-on-thursday) | 0.00 | ⚪ Neutral | Matthew |
+| Graham Gano | NYG | K | IR | [Giants release kicker Jude McAtamney after miss...](https://sny.tv/articles/giants-release-kicker-jude-mcatamney-10212025) | 0.00 | ⚪ Neutral | None |
+| Carson Wentz | Min | QB | Questionable | [Carson Wentz will start for Vikings on Thursday](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-wentz-will-start-for-vikings-on-thursday) | 0.00 | ⚪ Neutral | None |
+| Mike Evans | TB | WR | Out | [Fantasy Football Injury Report Week 8: Mike Eva...](https://www.nbcsports.com/fantasy/football/news/fantasy-football-injury-report-week-8-mike-evans-facing-lengthy-absence-more-qb-injuries-to-manage) | 0.24 | 🟢 Positive | Ovidio |
+| Jakobi Meyers | LV | WR | Out | [Raiders WR Jakobi Meyers 'for sure' still wants...](https://sports.yahoo.com/nfl/breaking-news/article/raiders-wr-jakobi-meyers-for-sure-still-wants-to-be-traded-but-says-if-im-here-ill-play-good-football-230331552.html) | 0.47 | 🟢 Positive | Matthew |
+| Mike Evans | TB | WR | Out | [Fantasy Football Injury Report Week 8: Mike Eva...](https://www.nbcsports.com/fantasy/football/news/fantasy-football-injury-report-week-8-mike-evans-facing-lengthy-absence-more-qb-injuries-to-manage) | 0.24 | 🟢 Positive | None |
 | Omarion Hampton | LAC | RB | IR | No recent news | 0.00 | N/A | Hans Gruber |
 | Trey Benson | Ari | RB | IR | No recent news | 0.00 | N/A | quis |
 | Joe Burrow | Cin | QB | IR | No recent news | 0.00 | N/A | quis |
-| D'Andre Swift | Chi | RB | Questionable | No recent news | 0.00 | N/A | B |
 | Brandon Aiyuk | SF | WR | PUP | No recent news | 0.00 | N/A | B |
+| Jayden Daniels | Was | QB | Out | No recent news | 0.00 | N/A | M |
+| Ricky Pearsall | SF | WR | Out | No recent news | 0.00 | N/A | M |
+| Brock Purdy | SF | QB | Out | No recent news | 0.00 | N/A | Ovidio |
 | Bucky Irving | TB | RB | Out | No recent news | 0.00 | N/A | Ovidio |
-| Jalen Coker | Car | WR | IR | No recent news | 0.00 | N/A | Ovidio |
+| Nico Collins | Hou | WR | Out | No recent news | 0.00 | N/A | -- hidden -- |
 | Joe Mixon | Hou | RB | PUP | No recent news | 0.00 | N/A | -- hidden -- |
-| Josh Jacobs | GB | RB | Questionable | No recent news | 0.00 | N/A | Jonathan |
-| Deebo Samuel | Was | WR | Questionable | No recent news | 0.00 | N/A | Jonathan |
+| Darren Waller | Mia | TE | Out | No recent news | 0.00 | N/A | Cato |
+| David Njoku | Cle | TE | Out | No recent news | 0.00 | N/A | Cato |
+| Lamar Jackson | Bal | QB | Out | No recent news | 0.00 | N/A | Cato |
 | Christian Watson | GB | WR | PUP | No recent news | 0.00 | N/A | Jonathan |
-| Jakobi Meyers | LV | WR | Questionable | No recent news | 0.00 | N/A | Matthew |
-| Christian Kirk | Hou | WR | Questionable | No recent news | 0.00 | N/A | Matthew |
+| Christian Kirk | Hou | WR | Out | No recent news | 0.00 | N/A | Matthew |
 | Dalton Kincaid | Buf | TE | Out | No recent news | 0.00 | N/A | Kenny |
-| Zach Ertz | Was | TE | Questionable | No recent news | 0.00 | N/A | Kenny |
-| Brock Bowers | LV | TE | Doubtful | No recent news | 0.00 | N/A | jim |
-| Hassan Haskins | LAC | RB | Questionable | No recent news | 0.00 | N/A | jim |
-| Graham Gano | NYG | K | IR | No recent news | 0.00 | N/A | None |
-| Zach Ertz | Was | TE | Questionable | No recent news | 0.00 | N/A | None |
-| Brandon McManus | GB | K | Questionable | No recent news | 0.00 | N/A | None |
+| Brock Bowers | LV | TE | Out | No recent news | 0.00 | N/A | jim |
+| Calvin Ridley | Ten | WR | Out | No recent news | 0.00 | N/A | jim |
+| Puka Nacua | LAR | WR | Out | No recent news | 0.00 | N/A | jim |
+| Case Keenum | Chi | QB | Out | No recent news | 0.00 | N/A | None |
+| Brandon McManus | GB | K | Out | No recent news | 0.00 | N/A | None |
 | Cairo Santos | Chi | K | Out | No recent news | 0.00 | N/A | None |
+| Jameis Winston | NYG | QB | Out | No recent news | 0.00 | N/A | None |
 | Michael Burton | Den | RB | IR | No recent news | 0.00 | N/A | None |
+| Darren Waller | Mia | TE | Out | No recent news | 0.00 | N/A | None |
 | DeAndre Carter | Cle | WR | IR | No recent news | 0.00 | N/A | None |
 | Tyreek Hill | Mia | WR | IR | No recent news | 0.00 | N/A | None |
 
 ## Detailed News by Player
 
-### Garrett Wilson (NYJ) - Doubtful
+### Josh Johnson (Was) - Out
 
-**Owner**: B
+**Owner**: None
 
-**Backup Player**: Allen Lazard (WR, NYJ)
-- ✅ **Available** as free agent
+**Injury**: Coach's Decision
 
-**News 1**: Jets' Garrett Wilson listed as doubtful for Week 7 vs. Panthers
+**📰 Latest Update**: [Woody Johnson slams Jets' QB play, defends Aaron Glenn: 'Hard when you have a QB with the rating that we’ve got'](https://sports.yahoo.com/nfl/article/woody-johnson-slams-jets-qb-play-defends-aaron-glenn-hard-when-you-have-a-qb-with-the-rating-that-weve-got-182159938.html)
 
-- **Sentiment Score**: -0.800
-- **Severity**: Severe
-- **Published**: Fri, 17 Oct 2025 15:45:56 +0000
-- **Link**: https://sny.tv/articles/jets-garrett-wilson-injury-status-week-7-panthers
-- **Details**: Jets head coach Aaron Glenn gave injury designations on Friday that included wide receiver Garrett Wilson being listed as doubtful for Sunday's game against the Panthers.
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
 
-**News 2**: Jets will list Garrett Wilson as doubtful for Sunday
+**News 1**: Woody Johnson slams Jets' QB play, defends Aaron Glenn: 'Hard when you have a QB with the rating that we’ve got'
 
-- **Sentiment Score**: -0.800
-- **Severity**: Severe
-- **Published**: Fri, 17 Oct 2025 15:37:16 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jets-will-list-garrett-wilson-as-doubtful-for-sunday
-- **Details**: The Jets are unlikely to have wide receiver Garrett Wilson in Sunday's attempt to win their first game of the season.
-
----
-
-### Darnell Mooney (Atl) - Questionable
-
-**Owner**: Hans Gruber
-
-**Backup Player**: KhaDarel Hodge (WR, Atl)
-- ✅ **Available** as free agent
-
-**News 1**: Jake Matthews, Darnell Mooney questionable to play for the Falcons
-
-- **Sentiment Score**: -0.500
+- **Sentiment Score**: -0.292
 - **Severity**: Moderate
-- **Published**: Fri, 17 Oct 2025 18:48:35 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/jake-matthews-darnell-mooney-questionable-to-play-for-the-falcons
-- **Details**: We'll have to wait until Sunday to find out if Falcons left tackle Jake Matthews will extend his streak of consecutive starts to 184 games.
+- **Published**: Tue, 21 Oct 2025 18:21:59 +0000
+- **Link**: https://sports.yahoo.com/nfl/article/woody-johnson-slams-jets-qb-play-defends-aaron-glenn-hard-when-you-have-a-qb-with-the-rating-that-weve-got-182159938.html
+- **Details**: “If we could just complete a pass, it would look good,” Johnson said Tuesday at league meetings in Manhattan about his 0-7 Jets.
 
----
+**News 2**: Woody Johnson's candid comments about QB Justin Fields are a bad look for G.M. Darren Mougey
 
-### David Njoku (Cle) - Out
+- **Sentiment Score**: -0.050
+- **Severity**: Neutral
+- **Published**: Tue, 21 Oct 2025 19:58:05 +0000
+- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/woody-johnsons-candid-comments-about-qb-justin-fields-are-a-bad-look-for-g-m-darren-mougey
+- **Details**: Jets owner Woody Johnson's stunning candor regarding soon-to-be-former starting quarterback Justin Fields came with strong words of support for coach Aaron Glenn.
 
-**Owner**: Cato
-
-**Backup Player**: Harold Fannin Jr. (TE, Cle)
-- Owned by b'Ridley me this'
-
-**News 1**: Mason Graham questionable, David Njoku out for Browns
-
-- **Sentiment Score**: -0.500
-- **Severity**: Moderate
-- **Published**: Fri, 17 Oct 2025 19:12:40 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mason-graham-questionable-david-njoku-out-for-browns
-- **Details**: Browns defensive tackle Mason Graham suffered an injury in practice this week that has created some doubt about his ability to play against the Dolphins this weekend.
-
----
-
-### George Kittle (SF) - IR
-
-**Owner**: Hans Gruber
-
-**News 1**: 49ers place WR Marquez Valdes-Scantling on injured reserve
+**News 3**: Russ claps back at Sean Payton + Jets owner rips Justin Fields
 
 - **Sentiment Score**: 0.000
 - **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 21:07:25 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/49ers-place-wr-marquez-valdes-scantling-on-injured-reserve
-- **Details**: The 49ers need two roster spots to activate tight end George Kittle and defensive tackle Kevin Givens off injured reserve.
-
-**News 2**: Brock Purdy, Ricky Pearsall out for 49ers-Falcons; George Kittle set to return
-
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 15:09:04 +0000
-- **Link**: https://www.nbcsportsbayarea.com/nfl/san-francisco-49ers/george-kittle-brock-purdy/1882036/?partner=yahoo
-- **Details**: George Kittle is set to make his 49ers return when San Francisco hosts the Atlanta Falcons on Sunday Night Football, while Brock Purdy remains out.
-
-**News 3**: 49ers rule out WR Ricky Pearsall; TE George Kittle ready to return
-
-- **Sentiment Score**: 0.200
-- **Severity**: Positive
-- **Published**: Fri, 17 Oct 2025 22:06:36 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/49ers-rule-out-wr-ricky-pearsall-te-george-kittle-ready-to-return
-- **Details**: The 49ers officially ruled out quarterback Brock Purdy (toe) and wide receiver Ricky Pearsall (knee).
-
----
-
-### Josh Downs (Ind) - Out
-
-**Owner**: quis
-
-**Backup Player**: Adonai Mitchell (WR, Ind)
-- ✅ **Available** as free agent
-
-**News 1**: Josh Downs among Colts ruled out, AD Mitchell will play
-
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 17:39:23 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/josh-downs-among-colts-ruled-out-ad-mitchell-will-play
-- **Details**: The Colts will not have three players for their matchup with the Chargers on Sunday.
-
----
-
-### Stefon Diggs (NE) - Questionable
-
-**Owner**: B
-
-**Backup Player**: DeMario Douglas (WR, NE)
-- ✅ **Available** as free agent
-
-**News 1**: Cowboys' Trevon Diggs out against Commanders after accident at home lands him in concussion protocol
-
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 19:42:46 +0000
-- **Link**: https://sports.yahoo.com/nfl/breaking-news/article/cowboys-trevon-diggs-out-against-commanders-after-accident-at-home-lands-him-in-concussion-protocol-194246908.html
-- **Details**: Dallas' struggling defense will be without one of its starting cornerbacks in Week 7.
+- **Published**: Wed, 22 Oct 2025 01:04:06 +0000
+- **Link**: https://sports.yahoo.com/nfl/article/russ-claps-back-at-sean-payton--jets-owner-rips-justin-fields-010406851.html
+- **Details**: Andrew Siciliano, Charles Robinson and Frank Schwab break down Russell Wilson's response to Sean Payton's recent comments. Plus, the boys dive into Woody Johnson's criticism of Justin Fields.
 
 ---
 
@@ -183,16 +94,329 @@
 
 **Owner**: B
 
+**Injury**: Quadriceps
+
+**📰 Latest Update**: [Deebo Samuel, Terry McLaurin are expected to return to full practices this week](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/deebo-samuel-terry-mclaurin-are-expected-to-return-to-full-practices-this-week)
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 36.0/100)
+- Elevated risk of future injury problems
+
 **Backup Player**: Jaylin Lane (WR, Was)
 - ✅ **Available** as free agent
 
-**News 1**: Commanders rule Terry McLaurin out again this week
+**News 1**: Deebo Samuel, Terry McLaurin are expected to return to full practices this week
+
+- **Sentiment Score**: 0.125
+- **Severity**: Neutral
+- **Published**: Tue, 21 Oct 2025 20:56:04 +0000
+- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/deebo-samuel-terry-mclaurin-are-expected-to-return-to-full-practices-this-week
+- **Details**: Commanders wide receivers Terry McLaurin and Deebo Samuel are expected to return to full participation in practice this week.
+
+---
+
+### Garrett Wilson (NYJ) - Out
+
+**Owner**: B
+
+**Injury**: Knee
+
+**📰 Latest Update**: [Russ claps back at Sean Payton + Jets owner rips Justin Fields](https://sports.yahoo.com/nfl/article/russ-claps-back-at-sean-payton--jets-owner-rips-justin-fields-010406851.html)
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Allen Lazard (WR, NYJ)
+- ✅ **Available** as free agent
+
+**News 1**: Russ claps back at Sean Payton + Jets owner rips Justin Fields
 
 - **Sentiment Score**: 0.000
 - **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 16:31:56 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/commanders-rule-terry-mclaurin-out-again-this-week
-- **Details**: Commanders wide receiver Terry McLaurin will miss another game this week.
+- **Published**: Wed, 22 Oct 2025 01:04:06 +0000
+- **Link**: https://sports.yahoo.com/nfl/article/russ-claps-back-at-sean-payton--jets-owner-rips-justin-fields-010406851.html
+- **Details**: Andrew Siciliano, Charles Robinson and Frank Schwab break down Russell Wilson's response to Sean Payton's recent comments. Plus, the boys dive into Woody Johnson's criticism of Justin Fields.
+
+**News 2**: Giants' Russell Wilson fires back at 'classless' Sean Payton postgame comments
+
+- **Sentiment Score**: 0.000
+- **Severity**: Neutral
+- **Published**: Tue, 21 Oct 2025 22:21:53 +0000
+- **Link**: https://sny.tv/articles/giants-russell-wilson-sean-payton-response-bounty-hunting
+- **Details**: Giants quarterback Russell Wilson took some time to respond to comments made by Broncos head coach Sean Payton after their Week 7 matchup on Sunday.
+
+**News 3**: Russell Wilson invokes bounty scandal in responding to criticism from Sean Payton
+
+- **Sentiment Score**: 0.000
+- **Severity**: Neutral
+- **Published**: Tue, 21 Oct 2025 21:12:35 +0000
+- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/russell-wilson-invokes-bounty-scandal-in-responding-to-criticism-from-sean-payton
+- **Details**: Wilson breaks character with a pointed response to his former coach.
+
+---
+
+### Kendre Miller (NO) - IR
+
+**Owner**: -- hidden --
+
+**Injury**: Knee
+
+**📰 Latest Update**: [Saints sign RB Velus Jones Jr. to the active roster from the practice squad](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/saints-sign-rb-velus-jones-jr-to-the-active-roster-from-the-practice-squad)
+
+**📅 Projected Return**:
+- News reports season-ending injury: "Saints sign RB Velus Jones Jr. to the active roster from the practice squad"
+- Estimated: 10 weeks (~70 days)
+
+**⚠️ Re-Injury Risk**: 🟠 High (Score: 68.0/100)
+- Multiple injuries this season (2x); Recurring Knee injury (2x); Serious injury status (IR)
+- Chronic issues: Knee
+
+**News 1**: Saints sign RB Velus Jones Jr. to the active roster from the practice squad
+
+- **Sentiment Score**: -0.133
+- **Severity**: Neutral
+- **Published**: Tue, 21 Oct 2025 22:18:21 +0000
+- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/saints-sign-rb-velus-jones-jr-to-the-active-roster-from-the-practice-squad
+- **Details**: The Saints officially placed center Erik McCoy and running back Kendre Miller on season-ending injured reserve, the team announced Tuesday.
+
+---
+
+### Deebo Samuel (Was) - Out
+
+**Owner**: Jonathan
+
+**Injury**: Heel
+
+**📰 Latest Update**: [Deebo Samuel, Terry McLaurin are expected to return to full practices this week](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/deebo-samuel-terry-mclaurin-are-expected-to-return-to-full-practices-this-week)
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Luke McCaffrey (WR, Was)
+- Owned by b'Ridley me this'
+
+**News 1**: Deebo Samuel, Terry McLaurin are expected to return to full practices this week
+
+- **Sentiment Score**: 0.125
+- **Severity**: Neutral
+- **Published**: Tue, 21 Oct 2025 20:56:04 +0000
+- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/deebo-samuel-terry-mclaurin-are-expected-to-return-to-full-practices-this-week
+- **Details**: Commanders wide receivers Terry McLaurin and Deebo Samuel are expected to return to full participation in practice this week.
+
+---
+
+### J.J. McCarthy (Min) - Out
+
+**Owner**: Matthew
+
+**Injury**: Ankle
+
+**📰 Latest Update**: [Carson Wentz will start for Vikings on Thursday](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-wentz-will-start-for-vikings-on-thursday)
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 36.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Carson Wentz (QB, Min)
+- 🚑 **WARNING**: Backup is also injured (Questionable - Shoulder)
+
+**News 1**: Carson Wentz will start for Vikings on Thursday
+
+- **Sentiment Score**: 0.000
+- **Severity**: Neutral
+- **Published**: Tue, 21 Oct 2025 18:48:33 +0000
+- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-wentz-will-start-for-vikings-on-thursday
+- **Details**: HC Kevin O'Connell said J.J. McCarthy is &quot;just not there&quot; in his recovery from an ankle injury to start on a short week.
+
+---
+
+### Graham Gano (NYG) - IR
+
+**Owner**: None
+
+**Injury**: Groin
+
+**📰 Latest Update**: [Giants release kicker Jude McAtamney after missed extra points in loss to Broncos](https://sny.tv/articles/giants-release-kicker-jude-mcatamney-10212025)
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 48.0/100)
+- Serious injury status (IR)
+
+**News 1**: Giants release kicker Jude McAtamney after missed extra points in loss to Broncos
+
+- **Sentiment Score**: 0.000
+- **Severity**: Neutral
+- **Published**: Tue, 21 Oct 2025 21:55:27 +0000
+- **Link**: https://sny.tv/articles/giants-release-kicker-jude-mcatamney-10212025
+- **Details**: Days after missing a pair of extra points in the Giants' 33-32 loss to the Denver Broncos, New York is releasing kicker Jude McAtamney. Big Blue is likely to turn to Graham Gano or Younghoe Koo.
+
+---
+
+### Carson Wentz (Min) - Questionable
+
+**Owner**: None
+
+**Injury**: Shoulder
+
+**📰 Latest Update**: [Carson Wentz will start for Vikings on Thursday](https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-wentz-will-start-for-vikings-on-thursday)
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 25.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Max Brosmer (QB, Min)
+- ✅ **Available** as free agent
+
+**News 1**: Carson Wentz will start for Vikings on Thursday
+
+- **Sentiment Score**: 0.000
+- **Severity**: Neutral
+- **Published**: Tue, 21 Oct 2025 18:48:33 +0000
+- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-wentz-will-start-for-vikings-on-thursday
+- **Details**: HC Kevin O'Connell said J.J. McCarthy is &quot;just not there&quot; in his recovery from an ankle injury to start on a short week.
+
+**News 2**: Carson Wentz has a full practice; Aaron Jones gets limited work
+
+- **Sentiment Score**: 0.139
+- **Severity**: Neutral
+- **Published**: Wed, 22 Oct 2025 00:18:49 +0000
+- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-wentz-has-a-full-practice-aaron-jones-gets-limited-work
+- **Details**: The Vikings made only two changes to their injury report on Tuesday.
+
+---
+
+### Mike Evans (TB) - Out
+
+**Owner**: Ovidio
+
+**Injury**: Concussion
+
+**📰 Latest Update**: [Fantasy Football Injury Report Week 8: Mike Evans facing lengthy absence, more QB injuries to manage](https://www.nbcsports.com/fantasy/football/news/fantasy-football-injury-report-week-8-mike-evans-facing-lengthy-absence-more-qb-injuries-to-manage)
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 43.0/100)
+- Multiple injuries this season (2x)
+
+**Backup Player**: Sterling Shepard (WR, TB)
+- Owned by b'Slobber Knockers'
+
+**News 1**: Fantasy Football Injury Report Week 8: Mike Evans facing lengthy absence, more QB injuries to manage
+
+- **Sentiment Score**: 0.244
+- **Severity**: Positive
+- **Published**: Tue, 21 Oct 2025 18:40:38 +0000
+- **Link**: https://www.nbcsports.com/fantasy/football/news/fantasy-football-injury-report-week-8-mike-evans-facing-lengthy-absence-more-qb-injuries-to-manage
+- **Details**: Follow the latest injury news for fantasy football lineups in Week 8.
+
+---
+
+### Jakobi Meyers (LV) - Out
+
+**Owner**: Matthew
+
+**Injury**: Knee
+
+**📰 Latest Update**: [Raiders WR Jakobi Meyers 'for sure' still wants to be traded but says 'If I'm here, I'll play good football'](https://sports.yahoo.com/nfl/breaking-news/article/raiders-wr-jakobi-meyers-for-sure-still-wants-to-be-traded-but-says-if-im-here-ill-play-good-football-230331552.html)
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Dont'e Thornton Jr. (WR, LV)
+- ✅ **Available** as free agent
+
+**News 1**: Raiders WR Jakobi Meyers 'for sure' still wants to be traded but says 'If I'm here, I'll play good football'
+
+- **Sentiment Score**: 0.467
+- **Severity**: Positive
+- **Published**: Tue, 21 Oct 2025 23:03:31 +0000
+- **Link**: https://sports.yahoo.com/nfl/breaking-news/article/raiders-wr-jakobi-meyers-for-sure-still-wants-to-be-traded-but-says-if-im-here-ill-play-good-football-230331552.html
+- **Details**: Meyers is in the final year of his three-year, $33 million contract with the Raiders.
+
+---
+
+### Mike Evans (TB) - Out
+
+**Owner**: None
+
+**Injury**: Concussion
+
+**📰 Latest Update**: [Fantasy Football Injury Report Week 8: Mike Evans facing lengthy absence, more QB injuries to manage](https://www.nbcsports.com/fantasy/football/news/fantasy-football-injury-report-week-8-mike-evans-facing-lengthy-absence-more-qb-injuries-to-manage)
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 43.0/100)
+- Multiple injuries this season (2x)
+
+**Backup Player**: Sterling Shepard (WR, TB)
+- Owned by b'Slobber Knockers'
+
+**News 1**: Fantasy Football Injury Report Week 8: Mike Evans facing lengthy absence, more QB injuries to manage
+
+- **Sentiment Score**: 0.244
+- **Severity**: Positive
+- **Published**: Tue, 21 Oct 2025 18:40:38 +0000
+- **Link**: https://www.nbcsports.com/fantasy/football/news/fantasy-football-injury-report-week-8-mike-evans-facing-lengthy-absence-more-qb-injuries-to-manage
+- **Details**: Follow the latest injury news for fantasy football lineups in Week 8.
+
+---
+
+### Omarion Hampton (LAC) - IR
+
+**Owner**: Hans Gruber
+
+**Injury**: Ankle
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 48.0/100)
+- Serious injury status (IR)
+
+**Backup Player**: Najee Harris (RB, LAC)
+- 🚑 **WARNING**: Backup is also injured (IR - Achilles)
+
+---
+
+### Trey Benson (Ari) - IR
+
+**Owner**: quis
+
+**Injury**: Knee
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 47.0/100)
+- Serious injury status (IR)
+
+**Backup Player**: James Conner (RB, Ari)
+- 🚑 **WARNING**: Backup is also injured (IR - Foot)
+
+---
+
+### Joe Burrow (Cin) - IR
+
+**Owner**: quis
+
+**Injury**: Toe
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 47.0/100)
+- Serious injury status (IR)
+
+---
+
+### Brandon Aiyuk (SF) - PUP
+
+**Owner**: B
+
+**Injury**: Knee - ACL + MCL
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 43.5/100)
+- Serious injury status (PUP)
+
+**Backup Player**: Ricky Pearsall (WR, SF)
+- 🚑 **WARNING**: Backup is also injured (Out - Knee - PCL)
+
+---
+
+### Jayden Daniels (Was) - Out
+
+**Owner**: M
+
+**Injury**: Hamstring
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 36.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Marcus Mariota (QB, Was)
+- ✅ **Available** as free agent
 
 ---
 
@@ -200,24 +424,13 @@
 
 **Owner**: M
 
+**Injury**: Knee - PCL
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 37.0/100)
+- Elevated risk of future injury problems
+
 **Backup Player**: Skyy Moore (WR, SF)
 - ✅ **Available** as free agent
-
-**News 1**: Brock Purdy, Ricky Pearsall out for 49ers-Falcons; George Kittle set to return
-
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 15:09:04 +0000
-- **Link**: https://www.nbcsportsbayarea.com/nfl/san-francisco-49ers/george-kittle-brock-purdy/1882036/?partner=yahoo
-- **Details**: George Kittle is set to make his 49ers return when San Francisco hosts the Atlanta Falcons on Sunday Night Football, while Brock Purdy remains out.
-
-**News 2**: 49ers rule out WR Ricky Pearsall; TE George Kittle ready to return
-
-- **Sentiment Score**: 0.200
-- **Severity**: Positive
-- **Published**: Fri, 17 Oct 2025 22:06:36 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/49ers-rule-out-wr-ricky-pearsall-te-george-kittle-ready-to-return
-- **Details**: The 49ers officially ruled out quarterback Brock Purdy (toe) and wide receiver Ricky Pearsall (knee).
 
 ---
 
@@ -225,41 +438,83 @@
 
 **Owner**: Ovidio
 
+**Injury**: Toe
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
+
 **Backup Player**: Mac Jones (QB, SF)
 - ✅ **Available** as free agent
 
-**News 1**: Brock Purdy, Ricky Pearsall out for 49ers-Falcons; George Kittle set to return
-
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 15:09:04 +0000
-- **Link**: https://www.nbcsportsbayarea.com/nfl/san-francisco-49ers/george-kittle-brock-purdy/1882036/?partner=yahoo
-- **Details**: George Kittle is set to make his 49ers return when San Francisco hosts the Atlanta Falcons on Sunday Night Football, while Brock Purdy remains out.
-
-**News 2**: 49ers rule out WR Ricky Pearsall; TE George Kittle ready to return
-
-- **Sentiment Score**: 0.200
-- **Severity**: Positive
-- **Published**: Fri, 17 Oct 2025 22:06:36 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/49ers-rule-out-wr-ricky-pearsall-te-george-kittle-ready-to-return
-- **Details**: The 49ers officially ruled out quarterback Brock Purdy (toe) and wide receiver Ricky Pearsall (knee).
-
 ---
 
-### Mike Evans (TB) - Questionable
+### Bucky Irving (TB) - Out
 
 **Owner**: Ovidio
 
-**Backup Player**: Sterling Shepard (WR, TB)
-- Owned by b'Slobber Knockers'
+**Injury**: Shoulder
 
-**News 1**: Mike Evans did not practice Friday
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 36.0/100)
+- Elevated risk of future injury problems
 
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 20:18:10 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mike-evans-did-not-practice-friday
-- **Details**: Buccaneers wide receiver Mike Evans practiced on Thursday for the first time since hurting his hamstring, but he was back on the sideline on Friday.
+**Backup Player**: Rachaad White (RB, TB)
+- Owned by b'The Auto Picks'
+
+---
+
+### Nico Collins (Hou) - Out
+
+**Owner**: -- hidden --
+
+**Injury**: Concussion
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 37.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Jayden Higgins (WR, Hou)
+- ✅ **Available** as free agent
+
+---
+
+### Joe Mixon (Hou) - PUP
+
+**Owner**: -- hidden --
+
+**Injury**: Ankle
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 42.5/100)
+- Serious injury status (PUP)
+
+**Backup Player**: Jakob Johnson (RB, Hou)
+- 🚑 **WARNING**: Backup is also injured (IR - Hamstring)
+
+---
+
+### Darren Waller (Mia) - Out
+
+**Owner**: Cato
+
+**Injury**: Pectoral
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Julian Hill (TE, Mia)
+- ✅ **Available** as free agent
+
+---
+
+### David Njoku (Cle) - Out
+
+**Owner**: Cato
+
+**Injury**: Knee
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Harold Fannin Jr. (TE, Cle)
+- Owned by b'Ridley me this'
 
 ---
 
@@ -267,33 +522,66 @@
 
 **Owner**: Cato
 
+**Injury**: Hamstring
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 36.0/100)
+- Elevated risk of future injury problems
+
 **Backup Player**: Cooper Rush (QB, Bal)
 - ✅ **Available** as free agent
 
-**News 1**: Puka Nacua ruled out for Rams against Jaguars in London
+---
 
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 15:55:25 +0000
-- **Link**: https://sports.yahoo.com/article/puka-nacua-ruled-rams-against-155525617.html
-- **Details**: Rams star wide receiver Puka Nacua will not play against the Jacksonville Jaguars in London after sustaining an ankle injury against the Ravens.
+### Christian Watson (GB) - PUP
+
+**Owner**: Jonathan
+
+**Injury**: Knee - ACL
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 43.5/100)
+- Serious injury status (PUP)
 
 ---
 
-### J.J. McCarthy (Min) - Questionable
+### Christian Kirk (Hou) - Out
 
 **Owner**: Matthew
 
-**Backup Player**: Carson Wentz (QB, Min)
+**Injury**: Hamstring
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 36.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Jaylin Noel (WR, Hou)
 - ✅ **Available** as free agent
 
-**News 1**: Carson Wentz will start for Vikings Sunday
+---
 
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 19:28:05 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/carson-wentz-will-start-for-vikings-sunday
-- **Details**: J.J. McCarthy will be the emergency third quarterback against the Eagles.
+### Dalton Kincaid (Buf) - Out
+
+**Owner**: Kenny
+
+**Injury**: Oblique
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Dawson Knox (TE, Buf)
+- ✅ **Available** as free agent
+
+---
+
+### Brock Bowers (LV) - Out
+
+**Owner**: jim
+
+**Injury**: Knee - PCL
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 37.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Michael Mayer (TE, LV)
+- ✅ **Available** as free agent
 
 ---
 
@@ -301,16 +589,13 @@
 
 **Owner**: jim
 
+**Injury**: Hamstring
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 36.0/100)
+- Elevated risk of future injury problems
+
 **Backup Player**: Chimere Dike (WR, Ten)
 - ✅ **Available** as free agent
-
-**News 1**: Calvin Ridley among Titans ruled out for Week 7
-
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 18:36:59 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/calvin-ridley-among-titans-ruled-out-for-week-7
-- **Details**: The Titans will not have one of their top offensive players when they face the Patriots on Sunday.
 
 ---
 
@@ -318,58 +603,110 @@
 
 **Owner**: jim
 
+**Injury**: Ankle
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 36.0/100)
+- Elevated risk of future injury problems
+
 **Backup Player**: Tutu Atwell (WR, LAR)
 - ✅ **Available** as free agent
 
-**News 1**: Puka Nacua ruled out for Rams against Jaguars in London
-
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 15:55:25 +0000
-- **Link**: https://sports.yahoo.com/article/puka-nacua-ruled-rams-against-155525617.html
-- **Details**: Rams star wide receiver Puka Nacua will not play against the Jacksonville Jaguars in London after sustaining an ankle injury against the Ravens.
-
-**News 2**: Puka Nacua ruled out for Rams-Jaguars
-
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 15:30:54 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/puka-nacua-ruled-out-for-rams-jaguars
-- **Details**: Los Angeles will not have a top offensive weapon for the team's Week 7 matchup in London.
-
 ---
 
-### Mike Evans (TB) - Questionable
+### Case Keenum (Chi) - Out
 
 **Owner**: None
 
-**Backup Player**: Sterling Shepard (WR, TB)
-- Owned by b'Slobber Knockers'
+**Injury**: Coach's Decision
 
-**News 1**: Mike Evans did not practice Friday
-
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 20:18:10 +0000
-- **Link**: https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/mike-evans-did-not-practice-friday
-- **Details**: Buccaneers wide receiver Mike Evans practiced on Thursday for the first time since hurting his hamstring, but he was back on the sideline on Friday.
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
 
 ---
 
-### Stefon Diggs (NE) - Questionable
+### Brandon McManus (GB) - Out
 
 **Owner**: None
 
-**Backup Player**: DeMario Douglas (WR, NE)
+**Injury**: Quadriceps
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 36.0/100)
+- Elevated risk of future injury problems
+
+---
+
+### Cairo Santos (Chi) - Out
+
+**Owner**: None
+
+**Injury**: Thigh
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
+
+---
+
+### Jameis Winston (NYG) - Out
+
+**Owner**: None
+
+**Injury**: Coach's Decision
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
+
+---
+
+### Michael Burton (Den) - IR
+
+**Owner**: None
+
+**Injury**: Hamstring
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 48.0/100)
+- Serious injury status (IR)
+
+---
+
+### Darren Waller (Mia) - Out
+
+**Owner**: None
+
+**Injury**: Pectoral
+
+**⚠️ Re-Injury Risk**: 🟢 Low (Score: 35.0/100)
+- Elevated risk of future injury problems
+
+**Backup Player**: Julian Hill (TE, Mia)
 - ✅ **Available** as free agent
 
-**News 1**: Cowboys' Trevon Diggs out against Commanders after accident at home lands him in concussion protocol
+---
 
-- **Sentiment Score**: 0.000
-- **Severity**: Neutral
-- **Published**: Fri, 17 Oct 2025 19:42:46 +0000
-- **Link**: https://sports.yahoo.com/nfl/breaking-news/article/cowboys-trevon-diggs-out-against-commanders-after-accident-at-home-lands-him-in-concussion-protocol-194246908.html
-- **Details**: Dallas' struggling defense will be without one of its starting cornerbacks in Week 7.
+### DeAndre Carter (Cle) - IR
+
+**Owner**: None
+
+**Injury**: Knee
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 47.0/100)
+- Serious injury status (IR)
+
+**Backup Player**: Isaiah Bond (WR, Cle)
+- ✅ **Available** as free agent
+
+---
+
+### Tyreek Hill (Mia) - IR
+
+**Owner**: None
+
+**Injury**: Knee - ACL
+
+**⚠️ Re-Injury Risk**: 🟡 Moderate (Score: 48.0/100)
+- Serious injury status (IR)
+
+**Backup Player**: Malik Washington (WR, Mia)
+- Owned by b'Kpop'
 
 ---
 

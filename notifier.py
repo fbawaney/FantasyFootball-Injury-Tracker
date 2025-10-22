@@ -67,7 +67,7 @@ class Notifier:
             print("=" * 80)
             print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             print(f"Total Injured Players: {len(injuries)}")
-            print("(All current injuries with ML predictions)\n")
+            print("(All current injuries)\n")
 
         for injury in injuries:
             alert_type = injury.get('alert_type', 'UPDATE')
@@ -108,42 +108,26 @@ class Notifier:
             else:
                 print(f"   📍 Available as Free Agent")
 
-            # ML Prediction information
-            ml_pred = injury.get('ml_prediction')
-            if ml_pred and not ml_pred.get('error'):
-                print(f"\n   🤖 ML PREDICTION:")
+            # Latest News Update
+            latest_headline = injury.get('top_news_headline', 'No recent news')
+            if latest_headline and latest_headline != 'No recent news':
+                print(f"\n   📰 LATEST NEWS: {latest_headline}")
 
-                # Check if overridden by news
-                if ml_pred.get('overridden_by_news'):
-                    print(f"      📰 NEWS-ADJUSTED TIMELINE:")
-                    return_week = ml_pred.get('return_week', '?')
-                    weeks_out = ml_pred.get('weeks_out', '?')
-                    print(f"      Expected return: NFL Week {return_week} ({weeks_out} weeks from now)")
-                    print(f"      Predicted days out: {ml_pred.get('predicted_days', '?')} days")
-                    print(f"      Confidence range: {ml_pred.get('confidence_low', '?')}-{ml_pred.get('confidence_high', '?')} days")
+            # Projected Return (from news analysis)
+            projected_return = injury.get('projected_return', {})
+            if projected_return.get('has_projection'):
+                print(f"\n   📅 PROJECTED RETURN:")
+                timeline_text = projected_return.get('timeline_text', 'See news for details')
+                print(f"      {timeline_text}")
 
-                    # Show original ML prediction
-                    ml_orig = ml_pred.get('ml_original', {})
-                    if ml_orig:
-                        print(f"\n      📊 ML Model (before news): NFL Week {ml_orig.get('return_week', '?')} ({ml_orig.get('predicted_days', '?')} days)")
+                weeks = projected_return.get('estimated_weeks')
+                days = projected_return.get('estimated_days')
+                if weeks:
+                    print(f"      Estimated: {weeks} weeks" + (f" (~{days} days)" if days else ""))
+                elif days:
+                    print(f"      Estimated: {days} days")
 
-                    # Show override reason
-                    print(f"\n      ⚠️  Override reason:")
-                    print(f"         {ml_pred.get('override_reason', 'News reports different timeline')}")
-                    if ml_pred.get('news_source'):
-                        print(f"         Source: {ml_pred['news_source']}")
-                else:
-                    print(f"      ML Model prediction:")
-                    current_week = ml_pred.get('current_week', '?')
-                    return_week = ml_pred.get('return_week', '?')
-                    weeks_out = ml_pred.get('weeks_out', '?')
-                    print(f"      Expected return: NFL Week {return_week} ({weeks_out} weeks from now)")
-                    print(f"      Predicted days out: {ml_pred.get('predicted_days', '?')} days")
-                    print(f"      Confidence range: {ml_pred.get('confidence_low', '?')}-{ml_pred.get('confidence_high', '?')} days")
-
-                print(f"      Return date: {ml_pred.get('expected_return_date', 'Unknown')}")
-
-            # Injury Risk Assessment
+            # Injury Risk Assessment (rule-based)
             risk = injury.get('risk_assessment')
             if risk:
                 risk_level = risk.get('risk_level', 'Unknown')
@@ -162,7 +146,7 @@ class Notifier:
                 else:
                     risk_icon = "⚪"
 
-                print(f"\n   {risk_icon} INJURY RISK: {risk_level} ({risk_score}/100)")
+                print(f"\n   {risk_icon} RE-INJURY RISK: {risk_level} ({risk_score}/100)")
                 if risk_msg:
                     print(f"      {risk_msg}")
                 if risk.get('chronic_areas'):
@@ -301,11 +285,11 @@ class Notifier:
 
     def format_summary_report(self, all_injuries: List[Dict], show_all: bool = True) -> str:
         """
-        Format a summary report of all current injuries with ML predictions
+        Format a summary report of all current injuries
 
         Args:
             all_injuries: All current injuries
-            show_all: If True, show comprehensive report with ML predictions for all
+            show_all: If True, show comprehensive report for all
 
         Returns:
             Formatted report string
@@ -373,31 +357,41 @@ class Notifier:
 
                     report.append(f"    ├─ {severity_icon} News Sentiment: {severity} ({sentiment_score:.2f})")
 
-                    # Show ML prediction if available and show_all is True
+                    # Show latest news headline
+                    latest_headline = injury.get('top_news_headline', 'No recent news')
+                    if latest_headline and latest_headline != 'No recent news':
+                        # Truncate if too long
+                        if len(latest_headline) > 80:
+                            latest_headline = latest_headline[:77] + "..."
+                        report.append(f"    ├─ 📰 Latest: {latest_headline}")
+
+                    # Show projected return if available
                     if show_all:
-                        ml_pred = injury.get('ml_prediction')
-                        if ml_pred and not ml_pred.get('error'):
-                            return_week = ml_pred.get('return_week', '?')
-                            weeks_out = ml_pred.get('weeks_out', '?')
-                            days = ml_pred.get('predicted_days', '?')
+                        projected_return = injury.get('projected_return', {})
+                        if projected_return.get('has_projection'):
+                            timeline_text = projected_return.get('timeline_text', '')
+                            weeks = projected_return.get('estimated_weeks')
+                            days = projected_return.get('estimated_days')
 
                             report.append(f"    │")
-                            if ml_pred.get('overridden_by_news'):
-                                report.append(f"    ├─ 📰 NEWS-ADJUSTED TIMELINE:")
-                                report.append(f"    │    Expected return: NFL Week {return_week} ({weeks_out} weeks, ~{days} days)")
-                                ml_orig = ml_pred.get('ml_original', {})
-                                if ml_orig:
-                                    report.append(f"    │    ML model said: Week {ml_orig.get('return_week', '?')} ({ml_orig.get('predicted_days', '?')} days)")
-                                    override_reason = ml_pred.get('override_reason', 'News reports different timeline')
-                                    # Truncate long override reasons (increased to 160 chars)
-                                    if len(override_reason) > 160:
-                                        override_reason = override_reason[:157] + "..."
-                                    report.append(f"    │    Override: {override_reason}")
-                            else:
-                                report.append(f"    ├─ 🤖 ML PREDICTION:")
-                                report.append(f"    │    Expected return: NFL Week {return_week} ({weeks_out} weeks, ~{days} days)")
+                            report.append(f"    ├─ 📅 PROJECTED RETURN:")
 
-                        # Show risk assessment
+                            if timeline_text:
+                                # Truncate long timeline text
+                                if len(timeline_text) > 90:
+                                    timeline_text = timeline_text[:87] + "..."
+                                report.append(f"    │    {timeline_text}")
+
+                            if weeks:
+                                time_str = f"{weeks} weeks"
+                                if days:
+                                    time_str += f" (~{days} days)"
+                                report.append(f"    │    Estimated: {time_str}")
+                            elif days:
+                                report.append(f"    │    Estimated: {days} days")
+
+                    # Show risk assessment
+                    if show_all:
                         risk = injury.get('risk_assessment')
                         if risk:
                             risk_level = risk.get('risk_level', 'Unknown')
@@ -407,8 +401,8 @@ class Notifier:
                             chronic_areas = risk.get('chronic_areas', [])
 
                             report.append(f"    │")
-                            report.append(f"    ├─ ⚠️  FUTURE INJURY RISK: {risk_icon} {risk_level} ({risk_score}/100)")
-                            if risk_message and risk_message != 'Clean injury history - low risk of future problems':
+                            report.append(f"    ├─ ⚠️  RE-INJURY RISK: {risk_icon} {risk_level} ({risk_score}/100)")
+                            if risk_message and risk_message != 'First injury or clean history - low re-injury risk':
                                 report.append(f"    │    {risk_message}")
                             if chronic_areas:
                                 report.append(f"    │    Chronic areas: {', '.join(chronic_areas)}")
@@ -434,11 +428,10 @@ class Notifier:
         report.append("-" * 80)
         report.append("News Sentiment: 🔴 Severe (<-0.5) | 🟡 Moderate (-0.5 to -0.2) | ⚪ Neutral | 🟢 Positive (>0.2)")
         report.append("")
-        report.append("Future Injury Risk: Predicts likelihood of future injury problems based on:")
-        report.append("  • Injury frequency (how often they get hurt)")
+        report.append("Re-Injury Risk: Likelihood of future injury problems based on:")
+        report.append("  • Injury frequency (number of injuries tracked)")
         report.append("  • Recurrence (same body part injured multiple times)")
-        report.append("  • Current injury severity")
-        report.append("  • Recovery patterns (slow vs. fast healers)")
+        report.append("  • Current injury severity (IR/PUP/Out status)")
         report.append("  Risk Levels: 🔴 Critical (75+) | 🟠 High (60-74) | 🟡 Moderate (40-59) | 🟢 Low (<40)")
         report.append("=" * 80 + "\n")
 

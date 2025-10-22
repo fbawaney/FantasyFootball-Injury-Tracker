@@ -1,14 +1,8 @@
-# Fantasy Football Injury Tracker with ML Predictions
+# Fantasy Football Injury Tracker
 
-A comprehensive tool to monitor NFL player injuries for your Yahoo Fantasy Football league with **ML-powered return timeline predictions** and **news-based intelligence**.
+A comprehensive tool to monitor NFL player injuries for your Yahoo Fantasy Football league with **news-based intelligence**.
 
 ## ✨ Key Features
-
-### 🤖 ML-Powered Predictions
-- **Return Timeline Predictions**: Random Forest model predicts when injured players will return
-- **News-Based Overrides**: Automatically detects season-ending injuries, surgeries, and return timelines from NFL news
-- **Injury Risk Scoring**: 0-100 risk score predicting future injury problems based on historical patterns
-- **NFL Rule Enforcement**: Respects IR/PUP minimums (4 weeks), injury designations
 
 ### 📊 Comprehensive Injury Monitoring
 - Real-time alerts when players get injured or status worsens
@@ -16,21 +10,31 @@ A comprehensive tool to monitor NFL player injuries for your Yahoo Fantasy Footb
 - Dual reporting modes: **Alert Mode** (urgent new injuries) vs **Comprehensive Mode** (all injuries)
 - Configurable alert window (default: 24 hours)
 
-### 📰 News Intelligence
+### 📰 News Intelligence & Projected Returns
 - Analyzes RSS feeds from Yahoo Sports and Rotoworld
 - Sentiment analysis with color-coded indicators (🔴 Severe, 🟡 Moderate, ⚪ Neutral, 🟢 Positive)
-- Extracts specific timelines from headlines ("out 4-6 weeks", "season-ending", "activated")
-- Overrides unrealistic ML predictions with confirmed news
+- **Extracts return timelines from news** (e.g., "out 4-6 weeks", "season-ending", "day-to-day")
+- **Shows latest news headline** for every injured player
+- **Projected return dates** when timeline information is available from news
+- Detects: season-ending injuries, surgery timelines, specific week ranges, return imminent
 
 ### 🏈 Depth Chart Integration
 - Identifies direct backup players using official ESPN/NFL depth charts
 - Shows if backup is available as free agent or already owned
 - **Warns if backup is also injured** to prevent bad pickups
 
+### ⚠️ Rule-Based Risk Assessment
+- Evaluates likelihood of re-injury based on historical injury patterns
+- **Uses injury database** to track player's full injury history over time
+- Tracks injury frequency (how often player gets injured)
+- Detects recurring injuries (same body part injured multiple times)
+- Considers injury severity and type (Achilles, ACL, hamstring, etc.)
+- No machine learning - uses simple, transparent heuristic rules
+
 ### 📈 Enhanced Reporting
 - Clean tree-structured console output
 - Detailed markdown reports (`injury_news.md`)
-- Shows ML prediction + news override + risk score for each player
+- Shows injury status, news sentiment, risk scores, and backup player info
 - Clear legends explaining all metrics
 
 ## 🚀 Quick Start (This Repo is Pre-Configured)
@@ -43,10 +47,7 @@ This repository is already configured for a specific Yahoo Fantasy Football leag
 # 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Setup ML model (one-time)
-python setup_ml.py
-
-# 3. Run once
+# 2. Run once
 python monitor.py --once
 ```
 
@@ -117,15 +118,7 @@ CHECK_INTERVAL=30
 ALERT_WINDOW_HOURS=24
 ```
 
-### 5. Setup ML Model
-
-```bash
-python setup_ml.py
-```
-
-This creates the ML model and injury database (one-time setup).
-
-### 6. First Run - OAuth Authentication
+### 5. First Run - OAuth Authentication
 
 ```bash
 python monitor.py --once
@@ -196,16 +189,14 @@ Team Alpha:
     ├─ Status: IR
     ├─ Injury: Achilles
     ├─ 🔴 News Sentiment: Severe (-0.85)
+    ├─ 📰 Latest: 49ers RB ruled out for remainder of season with Achilles injury
     │
-    ├─ 📰 NEWS-ADJUSTED TIMELINE:
-    │    Expected return: NFL Week 18 (11 weeks, ~77 days)
-    │    ML model said: Week 14 (35 days)
-    │    Override: Season-ending: "49ers RB ruled out for remainder of season"
+    ├─ 📅 PROJECTED RETURN:
+    │    Season-ending injury detected in news
+    │    Estimated: 12 weeks (~84 days)
     │
-    ├─ ⚠️  FUTURE INJURY RISK: 🟠 High (72.5/100)
-    │    Injury-prone: 4 injuries in last 6 months
-    │    Recurring Hamstring injury (3x)
-    │    Chronic areas: Hamstring, Achilles
+    ├─ ⚠️  RE-INJURY RISK: 🟠 High (68.5/100)
+    │    Multiple injuries this season (3x); Serious injury status (IR)
     │
     └─ 👉 Backup: Jordan Mason - ✅ AVAILABLE
 ```
@@ -214,78 +205,80 @@ Team Alpha:
 
 - Detailed tables of all injured players
 - Sortable by severity, status, team
-- News headlines with links
-- ML predictions and risk assessments
+- **Latest news headline** (clickable link) for every player
+- **Projected return timelines** when available from news analysis
+- Rule-based re-injury risk scores
 - Backup player information
-
-## 🧠 How ML Predictions Work
-
-### Random Forest Model
-- Trained on historical NFL injury data
-- Features: injury type, position, player history, severity
-- Predicts recovery timeline in days
-- Provides confidence intervals (min-max range)
-
-### NFL Rule Enforcement
-- **IR/PUP**: Minimum 4 weeks (28 days)
-- **Out**: Minimum 1 week (7 days)
-- **Questionable/Doubtful**: No minimum
-
-### News-Based Overrides
-When news is more specific than the ML model, it takes precedence:
-
-| News Detected | Override Action |
-|---------------|----------------|
-| "season-ending" | Set to rest of season |
-| "surgery scheduled" | Set to 6+ weeks |
-| "activated from IR" | Set to 0-7 days |
-| "out 4-6 weeks" | Use extracted timeline |
-| "week-to-week" | Set to 1-3 weeks |
-| "day-to-day" | Set to 1-7 days |
+- Full news article details with sentiment analysis
 
 ## ⚠️ Risk Score Explained
 
-The **Future Injury Risk** score (0-100) predicts likelihood of future injury problems:
+The **Re-Injury Risk** score (0-100) predicts likelihood of future injury problems using rule-based heuristics and **historical injury data from the database**:
 
-### Factors (Weighted):
-- **Frequency (30%)**: How often they get injured
-- **Recurrence (25%)**: Same body part injured multiple times
-- **Severity (20%)**: Current injury status (IR/PUP/Out)
-- **Recency (15%)**: Recent vs. old injury patterns
-- **Recovery (10%)**: Slow vs. fast healing history
+### Factors Considered:
+- **Injury Frequency (30%)**: Number of injuries in player's history (tracked across multiple runs)
+  - 1 injury = 15 points
+  - 2 injuries = 35 points
+  - 3 injuries = 60 points
+  - 4+ injuries = 85+ points
+
+- **Recurrence (25%)**: Same body part injured multiple times (checks full injury history)
+  - 2x same injury = +30 points
+  - 3x same injury = +60 points
+  - 4+ same injury = +90 points
+  - Extra +20 if current injury is recurring
+
+- **Current Severity (20%)**: How serious the current injury is
+  - Questionable = 20 points
+  - Out = 60 points
+  - IR/PUP = 90-100 points
+
+- **Injury Type (10%)**: Known problematic injuries get extra penalty
+  - High-risk: Achilles, ACL, back, concussion (+20 points)
+  - Moderate-risk: Hamstring, groin, ankle (+10 points)
+
+- **Currently Injured (15%)**: Currently injured players get recency penalty (90 points)
 
 ### Risk Levels:
-- 🔴 **Critical (75-100)**: Very high risk - frequent injuries, slow recovery
+- 🔴 **Critical (75-100)**: Very high risk - multiple recurring injuries
 - 🟠 **High (60-74)**: Significant concern - multiple risk factors
-- 🟡 **Moderate (40-59)**: Some concern - notable history
-- 🟢 **Low (0-39)**: Minimal concern - clean history
+- 🟡 **Moderate (40-59)**: Some concern - notable injury history
+- 🟢 **Low (0-39)**: Minimal concern - first or infrequent injuries
 
-**Use it to**: Decide whether to handcuff players, make trades, or avoid injury-prone pickups.
+**Use it to**: Decide whether to trade injured players, pick up handcuffs, or avoid injury-prone pickups.
 
 ## 📁 Project Structure
 
 ```
 fantasyfootball/
-├── monitor.py                    # Main monitoring script
-├── yahoo_client.py               # Yahoo Fantasy API client
-├── injury_tracker.py             # Core injury tracking + ML integration
-├── notifier.py                   # Alert system with formatting
-├── depth_chart.py                # ESPN depth chart integration
-├── news_analyzer.py              # News timeline extraction ✨ NEW
-├── ml_predictor.py               # ML model for predictions ✨ NEW
-├── risk_scorer.py                # Injury risk assessment ✨ NEW
-├── injury_database.py            # Historical injury tracking ✨ NEW
-├── historical_data_loader.py     # Load injury history ✨ NEW
-├── setup_ml.py                   # One-time ML setup
-├── test_ml_validation.py         # ML validation tests
-├── requirements.txt              # Python dependencies
-├── .env                          # Your configuration (pre-filled)
-├── .env.example                  # Template for others
-├── models/                       # Trained ML model ✨ NEW
-│   └── injury_predictor.pkl
-├── injury_data.json              # Cached data (auto-generated)
-├── injury_news.md                # Detailed report (auto-generated)
-└── token.json                    # OAuth token (auto-generated)
+├── Core Application
+│   ├── monitor.py                # Main monitoring script
+│   ├── yahoo_client.py           # Yahoo Fantasy API client
+│   └── injury_tracker.py         # Core injury tracking logic
+│
+├── Database & Analysis
+│   ├── injury_database.py        # SQLite database management
+│   ├── news_analyzer.py          # News analysis & timeline extraction
+│   ├── risk_scorer.py            # Rule-based injury risk assessment
+│   ├── depth_chart.py            # ESPN depth chart integration
+│   └── historical_data_loader.py # Database initialization tool
+│
+├── Utilities
+│   ├── notifier.py               # Email/notification system
+│   ├── check_database.py         # Database status checker
+│   ├── manage_duplicates.py      # Duplicate checker/cleaner
+│   └── test_system.py            # System integration tests
+│
+├── Configuration
+│   ├── requirements.txt          # Python dependencies
+│   ├── .env                      # Your configuration (pre-filled)
+│   └── .env.example              # Template for others
+│
+└── Generated Files
+    ├── injury_data.json          # Cached injury data (auto-generated)
+    ├── injury_news.md            # Detailed report (auto-generated)
+    ├── injury_history.db         # SQLite database (auto-generated)
+    └── token.json                # Yahoo OAuth token (auto-generated)
 ```
 
 ## 🗂️ Data Sources
@@ -342,6 +335,32 @@ Add:
 
 Create a task to run `python monitor.py --once` every 30 minutes.
 
+## 🛠️ Utility Scripts
+
+### Check Database Status
+```bash
+python check_database.py
+```
+Shows database statistics, top injured players, and recurring injuries.
+
+### Manage Duplicates
+```bash
+# Check for duplicate injury records
+python manage_duplicates.py --check
+
+# Clean duplicate records (keeps most recent)
+python manage_duplicates.py --clean
+```
+
+### Initialize/Sync Database
+```bash
+# Sync current injuries from Sleeper API
+python historical_data_loader.py --sync
+
+# Full database initialization
+python historical_data_loader.py --init
+```
+
 ## 🐛 Troubleshooting
 
 ### OAuth Issues
@@ -350,13 +369,6 @@ Create a task to run `python monitor.py --once` every 30 minutes.
 # Delete token and re-authenticate
 rm token.json
 python monitor.py --once
-```
-
-### ML Model Issues
-
-```bash
-# Rebuild ML model
-python setup_ml.py
 ```
 
 ### No Injuries Detected
@@ -371,13 +383,18 @@ python setup_ml.py
 - **Linux**: `sudo apt-get install libnotify-bin`
 - **Windows**: Check PowerShell execution policy
 
-## 📚 Documentation
+### Database Issues
 
-- **ML_FEATURES.md** - Complete ML capabilities guide
-- **NEWS_INTEGRATION_ANALYSIS.md** - How news integration works
-- **ML_PREDICTION_FIXES.md** - Technical bug fixes
-- **REPORTING_MODES.md** - Alert vs Comprehensive modes
-- **DEPTH_CHART_SOURCE.md** - ESPN API documentation
+```bash
+# Check database status and integrity
+python check_database.py
+
+# Check for duplicate records
+python manage_duplicates.py --check
+
+# Clean duplicates if found
+python manage_duplicates.py --clean
+```
 
 ## 🔒 Privacy & Security
 
@@ -390,11 +407,11 @@ python setup_ml.py
 ## 🤝 Contributing
 
 Ideas for enhancements:
-- Import real historical NFL injury data
 - Add practice report tracking (DNP/Limited/Full)
-- Implement email notifications
+- Enhance email notifications
 - Create web dashboard
 - Mobile app notifications
+- Improve return timeline predictions with more data sources
 
 ## 📄 License
 
@@ -406,4 +423,4 @@ Not affiliated with Yahoo, NFL, ESPN, or Sleeper. Injury information should be v
 
 ---
 
-**Good luck with your fantasy season!** 🏈🤖
+**Good luck with your fantasy season!** 🏈

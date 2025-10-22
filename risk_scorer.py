@@ -1,24 +1,26 @@
 """
 Injury Risk Scoring Module
 Calculates risk scores for players based on injury history and patterns
+Uses rule-based heuristics instead of machine learning
 """
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from datetime import datetime, timedelta
 import math
-from injury_database import InjuryDatabase
 
 
 class InjuryRiskScorer:
-    """Calculates injury risk scores for players"""
+    """Calculates injury risk scores for players using rule-based analysis"""
 
-    def __init__(self, db: InjuryDatabase):
+    def __init__(self, db=None):
         """
-        Initialize risk scorer
+        Initialize risk scorer with rule-based heuristics
 
         Args:
-            db: InjuryDatabase instance
+            db: Optional InjuryDatabase instance for historical data
         """
         self.db = db
+        # Track injury history in memory during session (if no DB)
+        self.injury_history: Dict[str, List[Dict]] = {}
 
         # Risk weights for different factors
         self.weights = {
@@ -39,10 +41,27 @@ class InjuryRiskScorer:
             'Suspended': 0  # Different category
         }
 
+    def add_injury_to_history(self, player_name: str, injury: Dict):
+        """
+        Add an injury to player's history for tracking
+
+        Args:
+            player_name: Player's full name
+            injury: Injury data dictionary
+        """
+        if player_name not in self.injury_history:
+            self.injury_history[player_name] = []
+
+        # Add timestamp if not present
+        if 'timestamp' not in injury:
+            injury['timestamp'] = datetime.now().isoformat()
+
+        self.injury_history[player_name].append(injury)
+
     def calculate_risk_score(self, player_name: str,
                             current_injury: Optional[Dict] = None) -> Dict:
         """
-        Calculate comprehensive injury risk score for a player
+        Calculate comprehensive injury risk score for a player using rule-based heuristics
 
         Args:
             player_name: Player's full name
@@ -51,24 +70,32 @@ class InjuryRiskScorer:
         Returns:
             Dictionary with risk score and breakdown
         """
-        # Get player's injury history
-        history = self.db.get_player_injury_history(player_name)
-        summary = self.db.get_player_summary(player_name)
+        # Get player's injury history - prefer database if available
+        # NOTE: We only READ from database here, not add. Adding happens in injury_tracker._save_injuries_to_database()
+        if self.db:
+            try:
+                history = self.db.get_player_injury_history(player_name)
+            except Exception as e:
+                print(f"Warning: Could not access injury database: {e}")
+                history = self.injury_history.get(player_name, [])
+        else:
+            # Fallback to in-memory tracking (only for session without database)
+            history = self.injury_history.get(player_name, [])
 
         if not history and not current_injury:
             return {
                 'risk_score': 0,
                 'risk_level': 'Low',
                 'breakdown': {},
-                'message': 'No injury history'
+                'message': 'No injury history - first injury this season'
             }
 
-        # Calculate individual risk factors
+        # Calculate individual risk factors using rule-based heuristics
         frequency_score = self._calculate_frequency_score(history)
-        recurrence_score = self._calculate_recurrence_score(player_name, current_injury)
+        recurrence_score = self._calculate_recurrence_score(history, current_injury)
         severity_score = self._calculate_severity_score(current_injury)
         recency_score = self._calculate_recency_score(history)
-        recovery_score = self._calculate_recovery_score(history)
+        recovery_score = self._calculate_recovery_score(history, current_injury)
 
         # Weighted total
         total_score = (
@@ -102,12 +129,12 @@ class InjuryRiskScorer:
             },
             'message': message,
             'total_injuries': len(history),
-            'chronic_areas': self._identify_chronic_areas(player_name)
+            'chronic_areas': self._identify_chronic_areas(history)
         }
 
-    def _calculate_frequency_score(self, history: list) -> float:
+    def _calculate_frequency_score(self, history: List[Dict]) -> float:
         """
-        Calculate score based on injury frequency
+        Calculate score based on injury frequency using rule-based heuristics
 
         Args:
             history: List of injury records
@@ -118,71 +145,75 @@ class InjuryRiskScorer:
         if not history:
             return 0
 
-        # Count injuries in different time periods
-        now = datetime.now()
-        injuries_6mo = 0
-        injuries_1yr = 0
+        # Count total injuries
         injuries_all = len(history)
 
-        for injury in history:
-            start_date = injury.get('injury_start_date')
-            if not start_date:
-                continue
+        # Simple rule-based frequency scoring
+        # 1 injury = 15 points, 2 = 35, 3 = 60, 4+ = 90+
+        if injuries_all == 1:
+            score = 15
+        elif injuries_all == 2:
+            score = 35
+        elif injuries_all == 3:
+            score = 60
+        elif injuries_all == 4:
+            score = 85
+        else:
+            score = min(100, 85 + (injuries_all - 4) * 5)
 
-            try:
-                injury_date = datetime.fromisoformat(start_date)
-                days_ago = (now - injury_date).days
+        return score
 
-                if days_ago <= 180:
-                    injuries_6mo += 1
-                if days_ago <= 365:
-                    injuries_1yr += 1
-            except:
-                continue
-
-        # Recent injuries count more
-        score = (
-            injuries_6mo * 30 +
-            (injuries_1yr - injuries_6mo) * 15 +
-            (injuries_all - injuries_1yr) * 5
-        )
-
-        return min(100, score)
-
-    def _calculate_recurrence_score(self, player_name: str,
+    def _calculate_recurrence_score(self, history: List[Dict],
                                    current_injury: Optional[Dict]) -> float:
         """
-        Calculate score based on recurring injuries
+        Calculate score based on recurring injuries (same body part injured multiple times)
 
         Args:
-            player_name: Player name
+            history: List of injury records
             current_injury: Current injury data
 
         Returns:
             Score 0-100
         """
-        recurring = self.db.get_recurring_injuries(player_name)
-
-        if not recurring:
+        if not history:
             return 0
 
-        # Check if current injury is a recurrence
+        # Count injuries by body part
+        body_part_counts = {}
+        for injury in history:
+            body_part = injury.get('injury_body_part')
+            if body_part:
+                body_part_counts[body_part] = body_part_counts.get(body_part, 0) + 1
+
+        if not body_part_counts:
+            return 0
+
+        # Get current injury body part
         current_body_part = None
         if current_injury:
             current_body_part = current_injury.get('injury_body_part')
 
         # Calculate recurrence penalty
-        max_recurrence = max(recurring.values()) if recurring.values() else 0
-        total_recurring_injuries = sum(1 for count in recurring.values() if count and count > 1)
+        max_recurrence = max(body_part_counts.values())
+        total_recurring_areas = sum(1 for count in body_part_counts.values() if count > 1)
 
-        score = (
-            max_recurrence * 20 +  # Worst recurring injury
-            total_recurring_injuries * 15  # Number of different recurring areas
-        )
+        # Rule-based scoring
+        score = 0
+
+        # Penalty for worst recurring injury
+        if max_recurrence == 2:
+            score += 30
+        elif max_recurrence == 3:
+            score += 60
+        elif max_recurrence >= 4:
+            score += 90
+
+        # Penalty for multiple chronic areas
+        score += total_recurring_areas * 10
 
         # Extra penalty if current injury is a recurrence
-        if current_body_part and recurring.get(current_body_part, 0) > 1:
-            score += 25
+        if current_body_part and body_part_counts.get(current_body_part, 0) > 1:
+            score += 20
 
         return min(100, score)
 
@@ -202,9 +233,9 @@ class InjuryRiskScorer:
         status = current_injury.get('injury_status', 'Questionable')
         return self.severity_scores.get(status, 20)
 
-    def _calculate_recency_score(self, history: list) -> float:
+    def _calculate_recency_score(self, history: List[Dict]) -> float:
         """
-        Calculate score based on how recent injuries are
+        Calculate score based on how recent injuries are (currently injured = highest risk)
 
         Args:
             history: List of injury records
@@ -215,94 +246,50 @@ class InjuryRiskScorer:
         if not history:
             return 0
 
-        # Find most recent injury
-        most_recent = None
-        for injury in history:
-            start_date = injury.get('injury_start_date')
-            if start_date:
-                try:
-                    injury_date = datetime.fromisoformat(start_date)
-                    if not most_recent or injury_date > most_recent:
-                        most_recent = injury_date
-                except:
-                    continue
+        # Rule: Currently injured = maximum recency risk
+        # Since we're calculating risk while player is injured, they are by definition recently injured
+        # Just return high score to reflect current injury status
+        return 90
 
-        if not most_recent:
-            return 0
-
-        days_since = (datetime.now() - most_recent).days
-
-        # Handle None or negative values
-        if days_since is None or days_since < 0:
-            return 0
-
-        # More recent = higher score
-        if days_since < 7:
-            return 100
-        elif days_since < 30:
-            return 80
-        elif days_since < 90:
-            return 60
-        elif days_since < 180:
-            return 40
-        elif days_since < 365:
-            return 20
-        else:
-            return 5
-
-    def _calculate_recovery_score(self, history: list) -> float:
+    def _calculate_recovery_score(self, history: List[Dict], current_injury: Optional[Dict]) -> float:
         """
-        Calculate score based on recovery time patterns
+        Calculate score based on injury severity (more severe = longer recovery = higher risk)
 
         Args:
             history: List of injury records
+            current_injury: Current injury data
 
         Returns:
             Score 0-100
         """
-        if not history:
+        if not current_injury:
             return 0
 
-        # Look at injuries with known recovery times
-        recovery_times = []
-        for injury in history:
-            days_missed = injury.get('days_missed')
-            # Handle None and ensure it's a number
-            if days_missed is not None and days_missed > 0:
-                try:
-                    recovery_times.append(float(days_missed))
-                except (ValueError, TypeError):
-                    continue
+        # Rule-based severity assessment based on injury status and body part
+        injury_status = current_injury.get('injury_status', 'Questionable')
+        body_part = current_injury.get('injury_body_part', '').lower()
 
-        if not recovery_times:
-            return 0
+        # Base score from injury status
+        status_scores = {
+            'Questionable': 20,
+            'Doubtful': 35,
+            'Out': 50,
+            'PUP': 75,
+            'IR': 90,
+            'Suspended': 0
+        }
+        score = status_scores.get(injury_status, 20)
 
-        # Calculate average recovery time
-        avg_recovery = sum(recovery_times) / len(recovery_times)
+        # Adjust based on body part (known problematic injuries)
+        high_risk_parts = ['achilles', 'acl', 'mcl', 'pcl', 'meniscus', 'concussion', 'back', 'neck']
+        moderate_risk_parts = ['hamstring', 'groin', 'quad', 'calf', 'shoulder', 'ankle']
 
-        # Longer average recovery = higher risk
-        if avg_recovery > 30:
-            score = 100
-        elif avg_recovery > 21:
-            score = 80
-        elif avg_recovery > 14:
-            score = 60
-        elif avg_recovery > 7:
-            score = 40
-        else:
-            score = 20
+        if any(part in body_part for part in high_risk_parts):
+            score = min(100, score + 20)
+        elif any(part in body_part for part in moderate_risk_parts):
+            score = min(100, score + 10)
 
-        # Bonus penalty for highly variable recovery times
-        if len(recovery_times) > 1:
-            import statistics
-            try:
-                std_dev = statistics.stdev(recovery_times)
-                if std_dev > 14:  # High variance
-                    score += 20
-            except:
-                pass
-
-        return min(100, score)
+        return score
 
     def _get_risk_level(self, score: float) -> str:
         """
@@ -325,23 +312,33 @@ class InjuryRiskScorer:
         else:
             return 'Minimal'
 
-    def _identify_chronic_areas(self, player_name: str) -> list:
+    def _identify_chronic_areas(self, history: List[Dict]) -> List[str]:
         """
         Identify chronic injury areas (recurring injuries)
 
         Args:
-            player_name: Player name
+            history: List of injury records
 
         Returns:
             List of body parts with multiple injuries
         """
-        recurring = self.db.get_recurring_injuries(player_name)
-        return [body_part for body_part, count in recurring.items() if count > 1]
+        if not history:
+            return []
 
-    def _generate_risk_message(self, score: float, history: list,
+        # Count injuries by body part
+        body_part_counts = {}
+        for injury in history:
+            body_part = injury.get('injury_body_part')
+            if body_part:
+                body_part_counts[body_part] = body_part_counts.get(body_part, 0) + 1
+
+        # Return body parts with 2+ injuries
+        return [body_part for body_part, count in body_part_counts.items() if count > 1]
+
+    def _generate_risk_message(self, score: float, history: List[Dict],
                                current_injury: Optional[Dict]) -> str:
         """
-        Generate human-readable risk message
+        Generate human-readable risk message using rule-based analysis
 
         Args:
             score: Risk score
@@ -352,57 +349,41 @@ class InjuryRiskScorer:
             Risk message string
         """
         if score < 20:
-            return "Clean injury history - low risk of future problems"
+            return "First injury or clean history - low re-injury risk"
 
         messages = []
+        injuries_count = len(history)
 
-        # Check for recent injuries
-        recent_count = sum(1 for inj in history
-                          if self._is_recent(inj.get('injury_start_date'), days=180))
-        if recent_count > 2:
-            messages.append(f"Injury-prone: {recent_count} injuries in last 6 months")
+        # Check frequency
+        if injuries_count >= 4:
+            messages.append(f"Injury-prone: {injuries_count} injuries tracked")
+        elif injuries_count >= 2:
+            messages.append(f"Multiple injuries this season ({injuries_count}x)")
 
         # Check for recurrence
         if current_injury:
             body_part = current_injury.get('injury_body_part')
-            player_name = current_injury.get('name')
-            if body_part and player_name:
-                recurring = self.db.get_recurring_injuries(player_name)
-                count = recurring.get(body_part, 0)
+            if body_part:
+                body_part_counts = {}
+                for injury in history:
+                    bp = injury.get('injury_body_part')
+                    if bp:
+                        body_part_counts[bp] = body_part_counts.get(bp, 0) + 1
+
+                count = body_part_counts.get(body_part, 0)
                 if count > 1:
                     messages.append(f"Recurring {body_part} injury ({count}x)")
 
-        # Check for slow recovery
-        slow_recovery = [inj for inj in history
-                        if inj.get('days_missed') is not None and inj.get('days_missed', 0) > 21]
-        if len(slow_recovery) > 2:
-            messages.append(f"Slow healer: {len(slow_recovery)} injuries took 3+ weeks")
+        # Check for severity
+        if current_injury:
+            status = current_injury.get('injury_status')
+            if status in ['IR', 'PUP']:
+                messages.append(f"Serious injury status ({status})")
 
         if not messages:
             return "Elevated risk of future injury problems"
 
         return "; ".join(messages)
-
-    def _is_recent(self, date_str: Optional[str], days: int = 180) -> bool:
-        """
-        Check if date is recent
-
-        Args:
-            date_str: ISO format date string
-            days: Number of days to consider recent
-
-        Returns:
-            True if recent
-        """
-        if not date_str:
-            return False
-
-        try:
-            injury_date = datetime.fromisoformat(date_str)
-            days_ago = (datetime.now() - injury_date).days
-            return days_ago <= days
-        except:
-            return False
 
     def get_risk_color(self, risk_level: str) -> str:
         """
@@ -426,29 +407,52 @@ class InjuryRiskScorer:
 
 def main():
     """Main entry point for standalone testing"""
-    from injury_database import InjuryDatabase
+    scorer = InjuryRiskScorer()
 
-    with InjuryDatabase() as db:
-        scorer = InjuryRiskScorer(db)
+    # Test with a sample injury
+    test_injury = {
+        'name': 'Test Player',
+        'position': 'RB',
+        'injury_status': 'Out',
+        'injury_body_part': 'Hamstring'
+    }
 
-        # Test with a sample injury
-        test_injury = {
-            'name': 'Test Player',
-            'position': 'RB',
-            'injury_status': 'Out',
-            'injury_body_part': 'Hamstring'
-        }
+    print("\nCalculating risk score for sample injury...")
+    risk = scorer.calculate_risk_score('Test Player', test_injury)
 
-        print("\nCalculating risk score for sample injury...")
-        risk = scorer.calculate_risk_score('Test Player', test_injury)
+    print(f"\nRisk Assessment:")
+    print(f"  Score: {risk['risk_score']}/100")
+    print(f"  Level: {risk['risk_level']} {scorer.get_risk_color(risk['risk_level'])}")
+    print(f"  Message: {risk['message']}")
+    print(f"\nBreakdown:")
+    for factor, score in risk['breakdown'].items():
+        print(f"  {factor.capitalize()}: {score}")
 
-        print(f"\nRisk Assessment:")
-        print(f"  Score: {risk['risk_score']}/100")
-        print(f"  Level: {risk['risk_level']} {scorer.get_risk_color(risk['risk_level'])}")
-        print(f"  Message: {risk['message']}")
-        print(f"\nBreakdown:")
-        for factor, score in risk['breakdown'].items():
-            print(f"  {factor.capitalize()}: {score}")
+    # Test with multiple injuries
+    print("\n\n--- Testing with recurring injury ---")
+    test_injury2 = {
+        'name': 'Test Player 2',
+        'position': 'WR',
+        'injury_status': 'Out',
+        'injury_body_part': 'Hamstring'
+    }
+
+    scorer.add_injury_to_history('Test Player 2', {
+        'injury_status': 'Questionable',
+        'injury_body_part': 'Hamstring'
+    })
+    scorer.add_injury_to_history('Test Player 2', {
+        'injury_status': 'Out',
+        'injury_body_part': 'Ankle'
+    })
+
+    risk2 = scorer.calculate_risk_score('Test Player 2', test_injury2)
+
+    print(f"\nRisk Assessment:")
+    print(f"  Score: {risk2['risk_score']}/100")
+    print(f"  Level: {risk2['risk_level']} {scorer.get_risk_color(risk2['risk_level'])}")
+    print(f"  Message: {risk2['message']}")
+    print(f"  Chronic areas: {risk2['chronic_areas']}")
 
 
 if __name__ == "__main__":

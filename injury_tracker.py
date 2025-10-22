@@ -2,7 +2,7 @@
 Injury Tracker Module
 Fetches injury data from multiple sources including Sleeper API and ESPN
 Includes depth chart integration to identify backup players
-Enhanced with ML predictions and injury risk scoring
+Includes rule-based injury risk assessment
 """
 import requests
 import json
@@ -11,22 +11,20 @@ from datetime import datetime
 import time
 import feedparser
 from textblob import TextBlob
-from injury_database import InjuryDatabase
-from ml_predictor import InjuryPredictor
 from risk_scorer import InjuryRiskScorer
+from injury_database import InjuryDatabase
 from news_analyzer import NewsAnalyzer
 
 
 class InjuryTracker:
-    """Tracks NFL player injuries from multiple sources with ML predictions"""
+    """Tracks NFL player injuries from multiple sources with risk assessment"""
 
-    def __init__(self, depth_chart_manager=None, enable_ml: bool = True):
+    def __init__(self, depth_chart_manager=None):
         """
         Initialize injury tracker with API endpoints
 
         Args:
             depth_chart_manager: Optional DepthChartManager instance for backup lookups
-            enable_ml: Enable ML predictions and risk scoring (default: True)
         """
         self.sleeper_players_url = "https://api.sleeper.app/v1/players/nfl"
         self.espn_injuries_base = "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl"
@@ -40,23 +38,20 @@ class InjuryTracker:
         self.depth_chart_manager = depth_chart_manager
         self.news_cache = {}  # Cache for RSS news by player name
 
-        # ML components
-        self.enable_ml = enable_ml
-        self.db = None
-        self.predictor = None
-        self.risk_scorer = None
+        # Initialize injury database for historical tracking
+        try:
+            self.db = InjuryDatabase()
+            self.risk_scorer = InjuryRiskScorer(db=self.db)
+            print("Rule-based injury risk assessment enabled with historical data")
+        except Exception as e:
+            print(f"Warning: Could not initialize injury database: {e}")
+            print("Risk assessment will use session-only tracking")
+            self.db = None
+            self.risk_scorer = InjuryRiskScorer()
 
-        if enable_ml:
-            try:
-                self.db = InjuryDatabase()
-                self.predictor = InjuryPredictor(self.db)
-                self.risk_scorer = InjuryRiskScorer(self.db)
-                self.news_analyzer = NewsAnalyzer()
-                print("ML predictions, risk scoring, and news analysis enabled")
-            except Exception as e:
-                print(f"Warning: Could not initialize ML components: {e}")
-                print("Running without ML predictions")
-                self.enable_ml = False
+        # Initialize news analyzer for timeline extraction
+        self.news_analyzer = NewsAnalyzer()
+        print("News-based timeline extraction enabled")
 
     def fetch_sleeper_players(self) -> Dict:
         """
@@ -426,23 +421,37 @@ class InjuryTracker:
                 player['top_news_sentiment'] = most_severe['sentiment_score']
                 player['top_news_severity'] = most_severe['severity_label']
                 player['top_news_link'] = most_severe['link']
+
+                # Extract timeline from news if available
+                timeline_data = self.news_analyzer.analyze_news_for_timeline(news_items)
+                if timeline_data.get('has_override'):
+                    player['projected_return'] = {
+                        'has_projection': True,
+                        'timeline_type': timeline_data.get('override_type', 'Unknown'),
+                        'timeline_text': timeline_data.get('reason', ''),
+                        'estimated_weeks': timeline_data.get('weeks_out'),
+                        'estimated_days': timeline_data.get('predicted_days'),
+                        'source': 'News Analysis'
+                    }
+                else:
+                    player['projected_return'] = {'has_projection': False}
             else:
                 player['top_news_headline'] = 'No recent news'
                 player['top_news_sentiment'] = 0.0
                 player['top_news_severity'] = 'N/A'
                 player['top_news_link'] = ''
+                player['projected_return'] = {'has_projection': False}
 
         # Add backup player information if depth chart manager available
         if self.depth_chart_manager:
             matched_players = self.enrich_with_backup_info(matched_players, yahoo_players)
 
-        # Add ML predictions and risk scoring if enabled
-        if self.enable_ml:
-            matched_players = self.enrich_with_ml_predictions(matched_players)
-
         # Save injuries to database for historical tracking
-        if self.enable_ml and self.db:
+        if self.db:
             self._save_injuries_to_database(matched_players)
+
+        # Add rule-based risk assessment (uses historical data from database)
+        matched_players = self.enrich_with_risk_assessment(matched_players)
 
         return matched_players
 
@@ -586,89 +595,6 @@ class InjuryTracker:
 
         return new_injuries
 
-    def enrich_with_ml_predictions(self, injured_players: List[Dict]) -> List[Dict]:
-        """
-        Add ML predictions, news overrides, and risk scores to injury data
-
-        Args:
-            injured_players: List of injured players
-
-        Returns:
-            Injured players enriched with ML predictions, news analysis, and risk scores
-        """
-        print("Adding ML predictions, news analysis, and risk scores...")
-
-        for player in injured_players:
-            # Get base ML prediction
-            if self.predictor:
-                try:
-                    ml_prediction = self.predictor.predict_recovery_time(player)
-
-                    # Check if news provides a timeline override
-                    news_items = player.get('news', [])
-                    if news_items and self.news_analyzer:
-                        news_override = self.news_analyzer.analyze_news_for_timeline(news_items)
-
-                        if news_override.get('has_override'):
-                            # Store original ML prediction
-                            ml_prediction['ml_original'] = {
-                                'predicted_days': ml_prediction['predicted_days'],
-                                'weeks_out': ml_prediction['weeks_out'],
-                                'return_week': ml_prediction['return_week']
-                            }
-
-                            # Apply news override
-                            ml_prediction['overridden_by_news'] = True
-                            ml_prediction['override_type'] = news_override['override_type']
-                            ml_prediction['override_reason'] = news_override['reason']
-                            ml_prediction['override_severity'] = news_override['severity']
-                            ml_prediction['news_source'] = news_override.get('news_source', '')
-
-                            # Update prediction values with news timeline
-                            ml_prediction['predicted_days'] = news_override['predicted_days']
-                            ml_prediction['confidence_low'] = news_override['confidence_low']
-                            ml_prediction['confidence_high'] = news_override['confidence_high']
-                            ml_prediction['weeks_out'] = news_override['weeks_out']
-
-                            # Recalculate return week with overridden timeline
-                            import numpy as np
-                            from datetime import datetime, timedelta
-                            current_week = ml_prediction['current_week']
-                            weeks_to_add = int(np.ceil(news_override['predicted_days'] / 7.0))
-                            ml_prediction['return_week'] = current_week + weeks_to_add
-                            ml_prediction['weeks_out'] = weeks_to_add
-
-                            expected_return = datetime.now() + timedelta(days=news_override['predicted_days'])
-                            ml_prediction['expected_return_date'] = expected_return.strftime('%Y-%m-%d')
-                        else:
-                            ml_prediction['overridden_by_news'] = False
-
-                    player['ml_prediction'] = ml_prediction
-
-                    # Get historical comparisons
-                    similar = self.predictor.get_historical_comparison(player, limit=3)
-                    player['similar_injuries'] = similar
-                except Exception as e:
-                    print(f"Error predicting for {player['name']}: {e}")
-                    import traceback
-                    traceback.print_exc()
-                    player['ml_prediction'] = None
-                    player['similar_injuries'] = []
-
-            # Get injury risk score
-            if self.risk_scorer:
-                try:
-                    risk = self.risk_scorer.calculate_risk_score(
-                        player['name'],
-                        player
-                    )
-                    player['risk_assessment'] = risk
-                except Exception as e:
-                    print(f"Error calculating risk for {player['name']}: {e}")
-                    player['risk_assessment'] = None
-
-        return injured_players
-
     def _save_injuries_to_database(self, injured_players: List[Dict]):
         """
         Save current injuries to database for historical tracking
@@ -679,28 +605,57 @@ class InjuryTracker:
         if not self.db:
             return
 
+        # Deduplicate the input list first to prevent adding the same injury multiple times
+        # Use player name + team + body part + status as the unique key
+        seen = set()
+        deduplicated_players = []
+
         for player in injured_players:
+            # Create unique key for this injury
+            key = (
+                player['name'].lower().strip(),
+                (player.get('team') or '').upper().strip(),
+                (player.get('injury_body_part') or '').lower().strip(),
+                (player.get('injury_status') or '').strip()
+            )
+
+            if key not in seen:
+                seen.add(key)
+                deduplicated_players.append(player)
+
+        # Process deduplicated list
+        for player in deduplicated_players:
             try:
                 # Check if this is a new injury or status change
                 history = self.db.get_player_injury_history(player['name'])
 
-                # Find active injury (no end date)
-                active_injury = None
-                for inj in history:
-                    if not inj.get('injury_end_date'):
-                        active_injury = inj
+                # Find ALL active injuries (no end date)
+                active_injuries = [inj for inj in history if not inj.get('injury_end_date')]
+
+                # Normalize current injury info for comparison
+                current_body_part = (player.get('injury_body_part') or '').lower().strip()
+                current_status = player.get('injury_status', '').strip()
+
+                # Look for an active injury matching the current body part
+                matching_injury = None
+                for active_inj in active_injuries:
+                    active_body_part = (active_inj.get('injury_body_part') or '').lower().strip()
+                    if current_body_part and active_body_part and current_body_part == active_body_part:
+                        matching_injury = active_inj
                         break
 
-                if active_injury:
-                    # Update existing injury if status changed
-                    if active_injury.get('injury_status') != player.get('injury_status'):
+                if matching_injury:
+                    # Found an active injury for the same body part
+                    # Check if status changed
+                    if matching_injury.get('injury_status') != current_status:
                         self.db.update_injury_status(
-                            active_injury['id'],
-                            player.get('injury_status'),
-                            active_injury.get('injury_status')
+                            matching_injury['id'],
+                            current_status,
+                            matching_injury.get('injury_status')
                         )
+                    # Otherwise, same body part and same status - no action needed
                 else:
-                    # Add new injury
+                    # No active injury for this body part - add new injury
                     self.db.add_injury_record(player)
 
                 # Update player summary
@@ -709,6 +664,32 @@ class InjuryTracker:
             except Exception as e:
                 print(f"Error saving injury for {player['name']}: {e}")
                 continue
+
+    def enrich_with_risk_assessment(self, injured_players: List[Dict]) -> List[Dict]:
+        """
+        Add rule-based injury risk assessment to injury data
+
+        Args:
+            injured_players: List of injured players
+
+        Returns:
+            Injured players enriched with risk scores
+        """
+        print("Adding rule-based risk assessments...")
+
+        for player in injured_players:
+            try:
+                # Calculate risk score using rule-based heuristics
+                risk = self.risk_scorer.calculate_risk_score(
+                    player['name'],
+                    player
+                )
+                player['risk_assessment'] = risk
+            except Exception as e:
+                print(f"Error calculating risk for {player['name']}: {e}")
+                player['risk_assessment'] = None
+
+        return injured_players
 
     def save_injury_news_to_markdown(self, injured_players: List[Dict],
                                      output_file: str = 'injury_news.md') -> None:
@@ -789,41 +770,48 @@ class InjuryTracker:
                     name = player.get('name', 'Unknown')
                     news_items = player.get('news', [])
 
-                    if news_items or player.get('ml_prediction') or player.get('risk_assessment'):
+                    if news_items or player.get('backup_player') or player.get('risk_assessment') or player.get('projected_return', {}).get('has_projection'):
                         f.write(f"### {name} ({player.get('team', 'N/A')}) - {player.get('injury_status', 'Unknown')}\n\n")
                         f.write(f"**Owner**: {player.get('owned_by_manager', 'Free Agent')}\n\n")
 
-                        # Show ML prediction if available
-                        ml_pred = player.get('ml_prediction')
-                        if ml_pred and not ml_pred.get('error'):
-                            return_week = ml_pred.get('return_week', 'Unknown')
-                            weeks_out = ml_pred.get('weeks_out', 'Unknown')
-                            days = ml_pred.get('predicted_days', 'Unknown')
+                        # Show injury body part if available
+                        body_part = player.get('injury_body_part')
+                        if body_part:
+                            f.write(f"**Injury**: {body_part}\n\n")
 
-                            # Check if prediction was overridden by news
-                            if ml_pred.get('overridden_by_news'):
-                                f.write(f"**🤖📰 NEWS-ADJUSTED PREDICTION**:\n")
-                                f.write(f"- Expected return: NFL Week {return_week} ({weeks_out} weeks from now, ~{days} days)\n")
-                                f.write(f"- Range: {ml_pred.get('confidence_low', 'N/A')}-{ml_pred.get('confidence_high', 'N/A')} days\n")
-                                f.write(f"- Return date: {ml_pred.get('expected_return_date', 'Unknown')}\n")
-                                f.write(f"- **Override reason**: {ml_pred.get('override_reason', 'News reports different timeline')}\n")
-
-                                # Show original ML prediction for comparison
-                                ml_orig = ml_pred.get('ml_original', {})
-                                if ml_orig:
-                                    f.write(f"- ML model (before news): NFL Week {ml_orig.get('return_week', '?')} ({ml_orig.get('predicted_days', '?')} days)\n")
-                                f.write("\n")
+                        # Show latest news headline
+                        latest_headline = player.get('top_news_headline', 'No recent news')
+                        if latest_headline and latest_headline != 'No recent news':
+                            news_link = player.get('top_news_link', '')
+                            if news_link:
+                                f.write(f"**📰 Latest Update**: [{latest_headline}]({news_link})\n\n")
                             else:
-                                f.write(f"**🤖 ML Prediction**:\n")
-                                f.write(f"- Expected return: NFL Week {return_week} ({weeks_out} weeks from now, ~{days} days)\n")
-                                f.write(f"- Range: {ml_pred.get('confidence_low', 'N/A')}-{ml_pred.get('confidence_high', 'N/A')} days\n")
-                                f.write(f"- Return date: {ml_pred.get('expected_return_date', 'Unknown')}\n\n")
+                                f.write(f"**📰 Latest Update**: {latest_headline}\n\n")
+
+                        # Show projected return if available
+                        projected_return = player.get('projected_return', {})
+                        if projected_return.get('has_projection'):
+                            timeline_text = projected_return.get('timeline_text', '')
+                            weeks = projected_return.get('estimated_weeks')
+                            days = projected_return.get('estimated_days')
+
+                            f.write(f"**📅 Projected Return**:\n")
+                            if timeline_text:
+                                f.write(f"- {timeline_text}\n")
+                            if weeks:
+                                time_str = f"{weeks} weeks"
+                                if days:
+                                    time_str += f" (~{days} days)"
+                                f.write(f"- Estimated: {time_str}\n")
+                            elif days:
+                                f.write(f"- Estimated: {days} days\n")
+                            f.write("\n")
 
                         # Show risk assessment if available
                         risk = player.get('risk_assessment')
                         if risk:
                             risk_color = self._get_risk_emoji(risk.get('risk_level', 'Low'))
-                            f.write(f"**⚠️ Injury Risk Assessment**: {risk_color} {risk.get('risk_level', 'Unknown')} (Score: {risk.get('risk_score', 0)}/100)\n")
+                            f.write(f"**⚠️ Re-Injury Risk**: {risk_color} {risk.get('risk_level', 'Unknown')} (Score: {risk.get('risk_score', 0)}/100)\n")
                             f.write(f"- {risk.get('message', 'No details')}\n")
                             if risk.get('chronic_areas'):
                                 f.write(f"- Chronic issues: {', '.join(risk['chronic_areas'])}\n")

@@ -4,7 +4,19 @@
       "WebSearch",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:yfpy.uberfastman.com)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(python check_database.py)",
+      "Bash(sqlite3 injury_history.db \"SELECT COUNT(*), player_name, injury_body_part, injury_status, COUNT(*) as cnt FROM injuries WHERE injury_end_date IS NULL GROUP BY player_name, injury_body_part, injury_status HAVING cnt > 1 ORDER BY cnt DESC LIMIT 20;\")",
+      "Bash(sqlite3 injury_history.db \"SELECT id, injury_body_part, injury_status, injury_end_date, created_at FROM injuries WHERE player_name = ''Mike Evans'' ORDER BY id DESC;\")",
+      "Bash(sqlite3 injury_history.db \"SELECT id, injury_body_part, injury_status, injury_start_date, created_at, updated_at FROM injuries WHERE player_name = ''Mike Evans'' AND injury_end_date IS NULL ORDER BY created_at;\")",
+      "Bash(sqlite3 injury_history.db \"SELECT id, player_name, injury_body_part, injury_status, injury_start_date, injury_end_date, created_at FROM injuries WHERE player_name LIKE ''%Benson%'' ORDER BY created_at;\")",
+      "Bash(sqlite3 injury_history.db \"SELECT id, player_name, injury_body_part, injury_status, injury_end_date, created_at FROM injuries WHERE injury_end_date LIKE ''2025-10-20T09:27:09%'' ORDER BY player_name LIMIT 20;\")",
+      "Bash(sqlite3 injury_history.db \"SELECT COUNT(*), MIN(injury_end_date), MAX(injury_end_date) FROM injuries WHERE injury_end_date LIKE ''2025-10-20T09:27:%'';\")",
+      "Bash(sqlite3 injury_history.db \"SELECT player_name, injury_body_part, injury_status, COUNT(*) as cnt, GROUP_CONCAT(id) as ids, GROUP_CONCAT(created_at) as dates FROM injuries WHERE injury_end_date IS NULL GROUP BY player_name ORDER BY cnt DESC LIMIT 10;\")",
+      "Bash(sqlite3 injury_history.db \"SELECT player_name, injury_body_part, injury_status, COUNT(*) as total_records, SUM(CASE WHEN injury_end_date IS NULL THEN 1 ELSE 0 END) as active_records, GROUP_CONCAT(SUBSTR(created_at, 1, 16)) as creation_dates FROM injuries GROUP BY player_name, injury_body_part, injury_status HAVING total_records > 1 ORDER BY total_records DESC LIMIT 10;\")",
+      "Bash(awk '{print $9, $5}')",
+      "Bash(cat README.md)",
+      "Bash(awk '{print $9}')"
     ],
     "deny": [],
     "ask": []
